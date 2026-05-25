@@ -318,9 +318,10 @@
 <!-- MODAL: 資源 -->
 <div class="modal fade" id="m-res" tabindex="-1">
   <div class="modal-dialog"><div class="modal-content">
-    <div class="modal-header"><h5 class="modal-title">新增資源</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-header"><h5 class="modal-title" id="res-ttl"><i class="bi bi-plus-circle me-2"></i>新增資源</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
     <div class="modal-body">
       <input type="hidden" id="fr-pid" />
+      <input type="hidden" id="fr-id" />
       <div class="row g-3">
         <div class="col-md-8"><label class="form-label">資源名稱 *</label><input id="fr-n" type="text" class="form-control" /></div>
         <div class="col-md-4"><label class="form-label">類型</label>
@@ -337,7 +338,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button>
-      <button class="btn-ac" onclick="submitRes()">儲存資源</button>
+      <button class="btn-ac" id="btn-submit-res" onclick="submitRes()"><i class="bi bi-save me-1"></i>儲存資源</button>
     </div>
   </div></div>
 </div>
@@ -840,14 +841,20 @@ async function loadDetail(pid){
         ${canEdit()?`<button class="btn-ac" onclick="openResM('${p.projectId}')"><i class="bi bi-plus"></i>新增資源</button>`:''}
       </div>
       <table class="table table-hover mb-0" style="font-size:12px">
-        <thead style="background:var(--n100)"><tr><th class="ps-3">資源名稱</th><th>類型</th><th>狀態</th><th>截止日</th><th>數量</th><th>金額</th><th>風險</th></tr></thead>
-        <tbody>${res.length===0?'<tr><td colspan="7" class="text-center py-3" style="color:var(--n500)">尚無資源</td></tr>':
+        <thead style="background:var(--n100)"><tr><th class="ps-3">資源名稱</th><th>類型</th><th>狀態</th><th>截止日</th><th>數量</th><th>金額</th><th>風險</th>${canEdit()?'<th style="width:80px">操作</th>':''}</tr></thead>
+        <tbody>${res.length===0?`<tr><td colspan="${canEdit()?8:7}" class="text-center py-3" style="color:var(--n500)">尚無資源</td></tr>`:
           res.map(r=>`<tr>
             <td class="ps-3 fw6">${r.resourceName}</td><td>${r.type}</td>
             <td><span class="bdg ${rc[r.status]||''}">${r.status}</span></td>
             <td class="font-mono">${fd(r.cutoffDate)||'-'}</td><td>${r.quantity}</td>
             <td class="font-mono">NT$${Number(r.totalCost||0).toLocaleString()}</td>
             <td style="color:${r.riskLevel==='高'?'var(--danger)':r.riskLevel==='中'?'var(--warning)':'var(--success)'}">${r.riskLevel}</td>
+            ${canEdit()?`<td>
+              <div class="d-flex gap-1">
+                <button class="btn-ic" onclick="openEditResM('${r.resourceId}','${p.projectId}')" title="編輯"><i class="bi bi-pencil"></i></button>
+                <button class="btn-ic dl" onclick="delRes('${r.resourceId}','${p.projectId}')" title="刪除"><i class="bi bi-trash"></i></button>
+              </div>
+            </td>`:''}
           </tr>`).join('')}
         </tbody>
       </table>
@@ -914,14 +921,20 @@ async function loadRes(){
     const rc={未確認:'r-unc',暫保:'r-pnd',已確認:'r-cfm',已失效:'r-exp'};
     pg(`<div class="sec-title"><i class="bi bi-box-seam"></i>資源控管</div>
     <div class="card"><table class="table table-hover mb-0" style="font-size:12px">
-      <thead style="background:var(--n100)"><tr><th class="ps-3">資源名稱</th><th>類型</th><th>狀態</th><th>截止日</th><th>數量</th><th>金額</th><th>風險</th></tr></thead>
-      <tbody>${r.resources.length===0?'<tr><td colspan="7" class="text-center py-4" style="color:var(--n500)">尚無資源</td></tr>':
+      <thead style="background:var(--n100)"><tr><th class="ps-3">資源名稱</th><th>類型</th><th>狀態</th><th>截止日</th><th>數量</th><th>金額</th><th>風險</th>${canEdit()?'<th style="width:80px">操作</th>':''}</tr></thead>
+      <tbody>${r.resources.length===0?`<tr><td colspan="${canEdit()?8:7}" class="text-center py-4" style="color:var(--n500)">尚無資源</td></tr>`:
         r.resources.map(res=>`<tr>
           <td class="ps-3 fw6">${res.resourceName}</td><td>${res.type}</td>
           <td><span class="bdg ${rc[res.status]||''}">${res.status}</span></td>
           <td class="font-mono">${fd(res.cutoffDate)||'-'}</td><td>${res.quantity}</td>
           <td class="font-mono">NT$${Number(res.totalCost||0).toLocaleString()}</td>
           <td style="color:${res.riskLevel==='高'?'var(--danger)':res.riskLevel==='中'?'var(--warning)':'var(--success)'}">${res.riskLevel}</td>
+          ${canEdit()?`<td>
+            <div class="d-flex gap-1">
+              <button class="btn-ic" onclick="openEditResM('${res.resourceId}','${res.projectId||''}')" title="編輯"><i class="bi bi-pencil"></i></button>
+              <button class="btn-ic dl" onclick="delRes('${res.resourceId}','${res.projectId||''}')" title="刪除"><i class="bi bi-trash"></i></button>
+            </div>
+          </td>`:''}
         </tr>`).join('')}
       </tbody>
     </table></div>`);
@@ -2161,25 +2174,86 @@ async function delMs(mid){
   }finally{ld(false);}
 }
 function openResM(pid){
+  document.getElementById('res-ttl').innerHTML='<i class="bi bi-plus-circle me-2"></i>新增資源';
+  document.getElementById('btn-submit-res').innerHTML='<i class="bi bi-plus-circle me-1"></i>新增資源';
   document.getElementById('fr-pid').value=pid;
+  document.getElementById('fr-id').value='';
   ['fr-n','fr-ct','fr-nt'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('fr-q').value=1; document.getElementById('fr-c').value=0;
+  document.getElementById('fr-q').value=1;
+  document.getElementById('fr-c').value=0;
+  document.getElementById('fr-t').value='場地';
+  document.getElementById('fr-st').value='未確認';
+  document.getElementById('fr-r').value='中';
   new bootstrap.Modal(document.getElementById('m-res')).show();
 }
-async function submitRes(){
-  const pid=document.getElementById('fr-pid').value,n=document.getElementById('fr-n').value.trim();
-  if(!n){toast('warning','請填寫資源名稱');return;}
+
+async function openEditResM(rid, pid){
   ld(true);
   try{
-    const r=await doPost({action:'addResource',token:APP.token,projectId:pid,data:{
-      resourceName:n,type:document.getElementById('fr-t').value,status:document.getElementById('fr-st').value,
-      cutoffDate:document.getElementById('fr-ct').value,quantity:Number(document.getElementById('fr-q').value),
-      unitCost:Number(document.getElementById('fr-c').value),riskLevel:document.getElementById('fr-r').value,
-      notes:document.getElementById('fr-nt').value
-    }});
-    if(r.success){bootstrap.Modal.getInstance(document.getElementById('m-res')).hide();toast('success','資源已新增');loadDetail(pid);}
-    else toast('danger',r.error);
+    // 先取得資源資料（透過 getResources 找到對應筆）
+    const r = await doGet({action:'getResources', token:APP.token, projectId: pid||''});
+    if(!r.success){toast('danger', r.error||'載入失敗'); return;}
+    const res = r.resources.find(x => x.resourceId === rid);
+    if(!res){toast('danger','找不到此資源，請重新整理'); return;}
+
+    document.getElementById('res-ttl').innerHTML='<i class="bi bi-pencil me-2"></i>編輯資源';
+    document.getElementById('btn-submit-res').innerHTML='<i class="bi bi-save me-1"></i>儲存變更';
+    document.getElementById('fr-pid').value = res.projectId || pid || '';
+    document.getElementById('fr-id').value  = rid;
+    document.getElementById('fr-n').value   = res.resourceName || '';
+    document.getElementById('fr-t').value   = res.type         || '場地';
+    document.getElementById('fr-st').value  = res.status       || '未確認';
+    document.getElementById('fr-ct').value  = res.cutoffDate ? String(res.cutoffDate).split('T')[0] : '';
+    document.getElementById('fr-q').value   = res.quantity     || 1;
+    document.getElementById('fr-c').value   = res.unitCost     || 0;
+    document.getElementById('fr-r').value   = res.riskLevel    || '中';
+    document.getElementById('fr-nt').value  = res.notes        || '';
+    new bootstrap.Modal(document.getElementById('m-res')).show();
+  }catch(e){toast('danger','載入失敗：'+e.message);}
+  finally{ld(false);}
+}
+
+async function submitRes(){
+  const rid=document.getElementById('fr-id').value;
+  const pid=document.getElementById('fr-pid').value;
+  const n=document.getElementById('fr-n').value.trim();
+  if(!n){toast('warning','請填寫資源名稱');return;}
+  const data={
+    resourceName: n,
+    type:         document.getElementById('fr-t').value,
+    status:       document.getElementById('fr-st').value,
+    cutoffDate:   document.getElementById('fr-ct').value,
+    quantity:     Number(document.getElementById('fr-q').value),
+    unitCost:     Number(document.getElementById('fr-c').value),
+    riskLevel:    document.getElementById('fr-r').value,
+    notes:        document.getElementById('fr-nt').value
+  };
+  ld(true);
+  try{
+    const r = rid
+      ? await doPost({action:'updateResource', token:APP.token, resourceId:rid, data})
+      : await doPost({action:'addResource',    token:APP.token, projectId:pid,  data});
+    if(r.success){
+      bootstrap.Modal.getInstance(document.getElementById('m-res')).hide();
+      toast('success', rid ? '資源已更新' : '資源已新增');
+      // 刷新：若在專案詳細頁則 loadDetail，否則 loadRes
+      if(pid && APP.page==='proj-detail') loadDetail(pid);
+      else loadRes();
+    } else toast('danger', r.error);
   }finally{ld(false);}
+}
+
+async function delRes(rid, pid){
+  if(!confirm('確定要刪除此資源？此操作無法復原。'))return;
+  ld(true);
+  try{
+    const r=await doPost({action:'deleteResource', token:APP.token, resourceId:rid});
+    if(r.success){
+      toast('success','資源已刪除');
+      if(pid && APP.page==='proj-detail') loadDetail(pid); else loadRes();
+    } else toast('danger', r.error||'刪除失敗');
+  }catch(e){toast('danger','連線失敗：'+e.message);}
+  finally{ld(false);}
 }
 
 // ============================================================
