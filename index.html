@@ -180,6 +180,17 @@
     .nav-tabs .nav-link:hover { color: var(--accent); border-color: transparent; }
     .nav-tabs { border-bottom: 2px solid var(--n200); }
 
+
+    /* 多日期選擇器 */
+    .date-pickers-grid { display:grid; gap:8px; }
+    .date-picker-item { display:flex; align-items:center; gap:8px; background:var(--n100); border:1px solid var(--n200); border-radius:var(--r); padding:8px 12px; }
+    .date-picker-label { font-size:11px; font-weight:700; color:var(--n500); min-width:64px; white-space:nowrap; }
+    .date-picker-label.multi { color:var(--accent); }
+    .date-picker-item input[type=date] { flex:1; border:1px solid var(--n300); border-radius:6px; padding:5px 10px; font-size:13px; background:#fff; }
+    .date-picker-item input[type=date]:focus { border-color:var(--accent); outline:none; box-shadow:0 0 0 3px rgba(232,97,10,.12); }
+    .dates-mode-tag { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; padding:3px 8px; border-radius:99px; margin-bottom:6px; }
+    .dates-mode-tag.continuous { background:rgba(46,196,182,.12); color:#0d8a82; }
+    .dates-mode-tag.multi { background:rgba(232,97,10,.12); color:var(--accent); }
   </style>
 </head>
 <body>
@@ -242,9 +253,19 @@
       <div class="col-md-6"><label class="form-label">客戶名稱 *</label><input id="fp-c" type="text" class="form-control" placeholder="例：科技部" /></div>
       <div class="col-md-6"><label class="form-label">活動類型 *</label>
         <select id="fp-t" class="form-control"><option value="">載入中...</option></select></div>
-      <div class="col-md-6"><label class="form-label">活動日期</label><input id="fp-d" type="date" class="form-control" /></div>
+      <div class="col-md-3"><label class="form-label">活動天數 / 梯次</label>
+        <input id="fp-dy" type="number" class="form-control" value="1" min="1" max="20" oninput="renderDatePickers()" /></div>
+      <div class="col-md-3 d-flex align-items-end">
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="fp-multi" onchange="renderDatePickers()">
+          <label class="form-check-label" for="fp-multi" style="font-size:12px;font-weight:600;color:var(--n700)">多梯不連續</label>
+        </div>
+      </div>
+      <!-- 動態日期區塊 -->
+      <div class="col-12" id="fp-dates-wrap">
+        <!-- renderDatePickers() 動態生成 -->
+      </div>
       <div class="col-md-6"><label class="form-label">活動地點</label><input id="fp-l" type="text" class="form-control" placeholder="例：台北國際會議中心" /></div>
-      <div class="col-md-3"><label class="form-label">活動天數</label><input id="fp-dy" type="number" class="form-control" value="1" min="1" /></div>
       <div class="col-md-3"><label class="form-label">預估人數</label><input id="fp-a" type="number" class="form-control" placeholder="0" /></div>
       <div class="col-md-6"><label class="form-label">PM 負責人</label><input id="fp-pm" type="text" class="form-control" /></div>
       <div class="col-12"><label class="form-label">特殊需求</label><div class="d-flex flex-wrap gap-3 mt-1">
@@ -574,7 +595,7 @@ async function loadDash(){
                   <div><div class="pname">${p.projectName}</div>
                     <div class="pmeta">
                       <span><i class="bi bi-building"></i>${p.clientName}</span>
-                      <span><i class="bi bi-calendar3"></i>${fd(p.eventDate)||'日期待定'}</span>
+                      <span><i class="bi bi-calendar3"></i>${fdDates(p)}</span>
                       <span><i class="bi bi-person-badge"></i>${p.pmName||'-'}</span>
                       <span style="background:rgba(232,97,10,.1);color:var(--accent);padding:1px 7px;border-radius:4px;font-size:10px">${p.eventType}</span>
                     </div>
@@ -644,7 +665,7 @@ async function loadProjs(){
           <td class="ps-3 fw6">${p.projectName}</td>
           <td>${p.clientName}</td>
           <td><span style="background:rgba(232,97,10,.1);color:var(--accent);padding:2px 8px;border-radius:4px;font-size:11px">${p.eventType}</span></td>
-          <td class="font-mono" style="font-size:12px">${fd(p.eventDate)||'待定'}</td>
+          <td class="font-mono" style="font-size:12px">${fdDates(p)}</td>
           <td>${p.pmName||'-'}</td>
           <td><span class="bdg b-prog">${p.projectStatus}</span></td>
           <td onclick="event.stopPropagation()">
@@ -703,7 +724,7 @@ async function loadDetail(pid){
           </div>
           <div class="d-flex flex-wrap gap-3" style="font-size:12px;color:var(--n500);margin-top:4px">
             <span><i class="bi bi-building me-1"></i>${p.clientName}</span>
-            <span><i class="bi bi-calendar3 me-1"></i>${fd(p.eventDate)||'日期待定'}</span>
+            <span><i class="bi bi-calendar3 me-1"></i>${fdDates(p)}</span>
             <span><i class="bi bi-geo-alt me-1"></i>${p.location||'待定'}</span>
             <span><i class="bi bi-people me-1"></i>${p.estimatedAttendees||0}人</span>
           </div>
@@ -1437,6 +1458,61 @@ async function toggleUserActive(uid, username, currentActive){
 
 // ============================================================
 // 表單
+
+// ============================================================
+// 多日期選擇器動態產生
+// ============================================================
+function renderDatePickers(presetDates){
+  var wrap = document.getElementById('fp-dates-wrap');
+  var days = parseInt(document.getElementById('fp-dy').value)||1;
+  if(days<1){days=1;document.getElementById('fp-dy').value=1;}
+  if(days>20){days=20;document.getElementById('fp-dy').value=20;}
+  var isMulti = document.getElementById('fp-multi').checked;
+  var modeTag = isMulti
+    ? '<span class="dates-mode-tag multi"><i class="bi bi-calendar-week me-1"></i>多梯次 — 請個別選擇各梯日期</span>'
+    : '<span class="dates-mode-tag continuous"><i class="bi bi-calendar-range me-1"></i>連續多天 — 自動帶入後續日期</span>';
+  var items = '';
+  for(var i=0;i<days;i++){
+    var labelClass = isMulti ? 'multi' : '';
+    var labelText  = days===1 ? '活動日期' : (isMulti ? '第 '+(i+1)+' 梯' : '第 '+(i+1)+' 天');
+    var preVal = (presetDates && presetDates[i]) ? presetDates[i] : '';
+    items += '<div class="date-picker-item" id="fp-date-item-'+i+'">'+
+      '<span class="date-picker-label '+labelClass+'">'+labelText+'</span>'+
+      '<input type="date" id="fp-date-'+i+'" class="form-control" value="'+preVal+'"'+
+      (isMulti?'':' oninput="onContinuousDateChange('+i+')"')+' />'+
+      '</div>';
+  }
+  wrap.innerHTML = (days>1?modeTag:'') + '<div class="date-pickers-grid">'+items+'</div>';
+}
+
+function onContinuousDateChange(idx){
+  var baseVal = document.getElementById('fp-date-'+idx);
+  if(!baseVal||!baseVal.value) return;
+  var base = new Date(baseVal.value);
+  var days = parseInt(document.getElementById('fp-dy').value)||1;
+  for(var i=idx+1;i<days;i++){
+    base.setDate(base.getDate()+1);
+    var el = document.getElementById('fp-date-'+i);
+    if(el) el.value = base.toISOString().split('T')[0];
+  }
+}
+
+function getEventDates(){
+  var days = parseInt(document.getElementById('fp-dy').value)||1;
+  var dates = [];
+  for(var i=0;i<days;i++){
+    var el = document.getElementById('fp-date-'+i);
+    if(el && el.value) dates.push(el.value);
+    else dates.push('');
+  }
+  return dates;
+}
+
+function getFirstEventDate(){
+  var dates = getEventDates();
+  return dates.length>0 ? dates[0] : '';
+}
+
 // ============================================================
 async function openProjM(){
   await loadEventTypesToSelect('fp-t', '');
@@ -1449,8 +1525,9 @@ async function openProjM(){
   ['fp-n','fp-c','fp-l','fp-pm','fp-nt'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fp-t').value='';
   document.getElementById('fp-dy').value=1; document.getElementById('fp-a').value='';
-  document.getElementById('fp-d').value='';
+  document.getElementById('fp-multi').checked=false;
   ['fp-fg','fp-ac','fp-fl','fp-tr','fp-md'].forEach(id=>document.getElementById(id).checked=false);
+  renderDatePickers();
   new bootstrap.Modal(document.getElementById('m-proj')).show();
 }
 
@@ -1469,10 +1546,21 @@ async function openEditProj(pid){
     document.getElementById('fp-c').value=proj.clientName||'';
     document.getElementById('fp-t').value=proj.eventType||'';
     document.getElementById('fp-t').disabled=true;
-    const d=proj.eventDate?String(proj.eventDate).split('T')[0]:'';
-    document.getElementById('fp-d').value=d;
     document.getElementById('fp-l').value=proj.location||'';
-    document.getElementById('fp-dy').value=proj.eventDays||1;
+    const days=proj.eventDays||1;
+    document.getElementById('fp-dy').value=days;
+    // 解析 eventDates (JSON陣列) 或 fallback 到 eventDate
+    var presetDates=[];
+    if(proj.eventDates){
+      try{presetDates=JSON.parse(proj.eventDates);}catch(e){}
+    }
+    if(presetDates.length===0&&proj.eventDate){
+      const d=String(proj.eventDate).split('T')[0];
+      presetDates=[d];
+    }
+    var isMulti=proj.isMultiSession==='TRUE'||proj.isMultiSession===true;
+    document.getElementById('fp-multi').checked=isMulti;
+    renderDatePickers(presetDates);
     document.getElementById('fp-a').value=proj.estimatedAttendees||'';
     document.getElementById('fp-pm').value=proj.pmName||'';
     document.getElementById('fp-nt').value=proj.notes||'';
@@ -1495,9 +1583,14 @@ async function submitProj(){
   const t=document.getElementById('fp-t').value;
   if(!n||!c){toast('warning','請填寫專案名稱與客戶名稱');return;}
   if(!isEdit&&!t){toast('warning','請選擇活動類型');return;}
+  const eventDatesArr=getEventDates();
+  const firstDate=getFirstEventDate();
+  const isMultiSession=document.getElementById('fp-multi').checked;
   const data={
     projectName:n, clientName:c, eventType:t,
-    eventDate:document.getElementById('fp-d').value,
+    eventDate:firstDate,
+    eventDates:JSON.stringify(eventDatesArr),
+    isMultiSession:isMultiSession?'TRUE':'FALSE',
     location:document.getElementById('fp-l').value,
     eventDays:document.getElementById('fp-dy').value,
     estimatedAttendees:document.getElementById('fp-a').value,
@@ -1585,6 +1678,22 @@ function setTop(t,m){document.getElementById('t-title').textContent=t;document.g
 function canEdit(){return APP.user&&['Admin','PM'].includes(APP.user.role);}
 function esc(v){return String(v??'').replace(/[&<>\"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c];});}
 function fd(d){if(!d)return'';try{const dt=new Date(d);return isNaN(dt)?d:dt.toLocaleDateString('zh-TW');}catch{return d;}}
+function fdDates(p){
+  if(p.eventDates){
+    try{
+      var arr=JSON.parse(p.eventDates).filter(function(d){return d;});
+      if(arr.length>1){
+        if(p.isMultiSession==='TRUE'){
+          return arr.map(function(d,i){return '第'+(i+1)+'梯 '+fd(d);}).join('　');
+        } else {
+          return fd(arr[0])+' ～ '+fd(arr[arr.length-1])+' ('+arr.length+'天)';
+        }
+      }
+      if(arr.length===1) return fd(arr[0]);
+    }catch(e){}
+  }
+  return fd(p.eventDate)||'日期待定';
+}
 function ld(show){const id='__ld';if(show&&!document.getElementById(id)){const el=document.createElement('div');el.id=id;el.className='ld-ov';el.innerHTML='<div class="ld-ring"></div>';document.body.appendChild(el);}else if(!show){const el=document.getElementById(id);if(el)el.remove();}}
 function toast(type,msg){const ex=document.querySelector('.t-msg');if(ex)ex.remove();const ic={success:'check-circle-fill',danger:'x-circle-fill',warning:'exclamation-triangle-fill'};const el=document.createElement('div');el.className=`alert alert-${type} alert-dismissible t-msg`;el.innerHTML=`<i class="bi bi-${ic[type]||'info-circle'} me-2"></i>${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;document.body.appendChild(el);setTimeout(()=>el.remove(),4500);}
 
@@ -2304,7 +2413,7 @@ async function loadClosed(){
               <div style="font-size:10px;color:var(--n500)">結案：${fd(p.updatedAt)}</div></td>
             <td>${p.clientName}</td>
             <td><span style="background:rgba(136,136,136,.1);color:var(--n500);padding:2px 8px;border-radius:4px;font-size:11px">${p.eventType}</span></td>
-            <td class="font-mono" style="font-size:12px">${fd(p.eventDate)||'未定'}</td>
+            <td class="font-mono" style="font-size:12px">${fdDates(p)}</td>
             <td>${p.pmName||'-'}</td>
             <td>
               <div class="d-flex align-items-center gap-2">
@@ -2440,7 +2549,7 @@ async function loadProjStats(pid){
             <div style="font-size:18px;font-weight:800;color:var(--n900)">${p.projectName}</div>
             <div style="font-size:12px;color:var(--n500);margin-top:4px">
               <i class="bi bi-building me-1"></i>${p.clientName} ·
-              <i class="bi bi-calendar3 ms-2 me-1"></i>${fd(p.eventDate)||'日期待定'} ·
+              <i class="bi bi-calendar3 ms-2 me-1"></i>${fdDates(p)} ·
               <i class="bi bi-tag ms-2 me-1"></i>${p.eventType}
             </div>
           </div>
