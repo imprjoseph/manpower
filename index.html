@@ -31,7 +31,9 @@
       --tr: .18s ease;
     }
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:var(--font);background:var(--n100);color:var(--n900);overflow-x:hidden}
+    body{font-family:var(--font);background:var(--n100);color:var(--n900);overflow-x:hidden;line-height:1.5;-webkit-font-smoothing:antialiased}
+    button,input,select,textarea{font:inherit}
+    :focus-visible{outline:3px solid rgba(232,97,10,.28);outline-offset:2px}
     #app-shell{display:flex;min-height:100vh}
 
     /* SIDEBAR */
@@ -60,11 +62,15 @@
     #topbar{height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--n200);padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--sh)}
     .top-title{font-size:16px;font-weight:700;color:var(--n900)}
     .top-meta{font-size:11px;color:var(--n500);margin-top:1px}
-    #page{padding:24px;flex:1}
+    #page{padding:24px;flex:1;width:100%;max-width:1680px;margin:0 auto}
+    .top-refresh{width:auto;padding:0 10px;gap:6px}
+    .top-refresh-label{font-size:12px;font-weight:650}
 
     /* LOGIN */
     #login{display:grid;place-items:center;min-height:100dvh;background:#f5f5f4;position:fixed;inset:0;z-index:999;padding:24px;overflow:auto}
-    .lg-bg{position:absolute;inset:0;background:radial-gradient(circle at 15% 10%,rgba(232,97,10,.1),transparent 34%)}
+    .lg-bg{position:absolute;inset:0;background:
+      radial-gradient(circle at 15% 10%,rgba(232,97,10,.11),transparent 34%),
+      linear-gradient(135deg,#fafaf9 0%,#f5f5f4 100%)}
     .lg-box{background:#fff;border:1px solid #e7e5e4;border-radius:18px;padding:34px;width:min(100%,420px);box-shadow:0 20px 60px rgba(28,25,23,.1);position:relative;z-index:1}
     .lg-brand{display:flex;align-items:center;gap:14px;margin-bottom:28px}
     .lg-brand .brand-mark{font-size:40px}
@@ -74,6 +80,10 @@
     .lg-inp{width:100%;background:#fff;border:1.5px solid #d6d3d1;border-radius:10px;padding:12px 14px;font-size:15px;color:#1c1917;font-family:var(--font);outline:none;transition:border-color var(--tr),box-shadow var(--tr)}
     .lg-inp::placeholder{color:#a8a29e}
     .lg-inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,97,10,.12)}
+    .lg-password{position:relative}
+    .lg-password .lg-inp{padding-right:48px}
+    .lg-password-toggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;border-radius:8px;background:transparent;color:#78716c;display:grid;place-items:center;cursor:pointer}
+    .lg-password-toggle:hover{background:#f5f5f4;color:var(--accent)}
     .btn-lg{width:100%;min-height:46px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px 16px;font-size:15px;font-weight:700;cursor:pointer;transition:background var(--tr),box-shadow var(--tr);letter-spacing:.2px}
     .btn-lg:hover{background:#cf5205;box-shadow:0 5px 18px rgba(232,97,10,.24)}
     .btn-lg:disabled{opacity:.65;cursor:wait;box-shadow:none}
@@ -148,7 +158,8 @@
     .form-control:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,97,10,.12);outline:none}
 
     /* LOADING/TOAST */
-    .ld-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9999}
+    .ld-ov{position:fixed;inset:0;background:rgba(247,247,247,.76);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:9999}
+    .ld-box{min-width:150px;background:#fff;border:1px solid var(--n200);border-radius:12px;box-shadow:var(--shm);padding:18px 22px;display:flex;align-items:center;gap:12px;color:var(--n700);font-size:13px;font-weight:650}
     .ld-ring{width:44px;height:44px;border:3px solid rgba(232,97,10,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
     .t-msg{position:fixed;top:68px;right:20px;z-index:9999;min-width:280px;border-radius:var(--r);box-shadow:var(--shm);animation:sli .25s ease}
@@ -173,8 +184,10 @@
       #page{padding:16px}
       .mobile-menu{display:inline-flex}
       #t-clk{display:none}
+      .top-refresh-label{display:none}
       .lg-box{padding:28px 22px;border-radius:14px}
       .table-responsive{border-radius:var(--r)}
+      .t-msg{left:16px;right:16px;min-width:0;top:72px}
     }
     @media(prefers-reduced-motion:reduce){
       *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -231,7 +244,12 @@
       <div><div class="lg-brand-title">節點控管系統</div><div class="lg-brand-sub">Milestone Control System</div></div>
     </div>
     <div class="mb-3"><label class="lg-lbl" for="iu">帳號</label><input id="iu" name="username" type="text" class="lg-inp" placeholder="輸入帳號" autocomplete="username" autocapitalize="none" required /></div>
-    <div class="mb-4"><label class="lg-lbl" for="ip">密碼</label><input id="ip" name="password" type="password" class="lg-inp" placeholder="輸入密碼" autocomplete="current-password" required /></div>
+    <div class="mb-4"><label class="lg-lbl" for="ip">密碼</label>
+      <div class="lg-password">
+        <input id="ip" name="password" type="password" class="lg-inp" placeholder="輸入密碼" autocomplete="current-password" required />
+        <button class="lg-password-toggle" type="button" aria-label="顯示密碼" aria-pressed="false" onclick="togglePassword(this)"><i class="bi bi-eye"></i></button>
+      </div>
+    </div>
     <button id="login-btn" class="btn-lg" type="submit"><span class="login-btn-label">登入系統</span></button>
     <div id="lerr" role="alert" aria-live="polite"></div>
     <div class="login-note">imPR 專案營運管理平台</div>
@@ -244,15 +262,15 @@
     <div class="sb-brand"><div class="brand-lockup"><div class="brand-mark">imPR</div><div class="brand-copy"><span class="brand-name">MCS</span><span class="brand-sub">Project Control</span></div></div></div>
     <nav class="sb-nav" aria-label="主要選單">
       <div class="nav-sec">主要功能</div>
-      <button type="button" class="nav-a act" onclick="nav('dashboard')"><i class="bi bi-grid-1x2-fill"></i>總覽</button>
-      <button type="button" class="nav-a" onclick="nav('projects')"><i class="bi bi-folder2-open"></i>專案管理</button>
-      <button type="button" class="nav-a" onclick="nav('closed')"><i class="bi bi-archive"></i>已結案專案</button>
-      <button type="button" class="nav-a" onclick="nav('resources')"><i class="bi bi-box-seam"></i>資源控管</button>
+      <button type="button" class="nav-a act" data-page="dashboard" onclick="nav('dashboard')"><i class="bi bi-grid-1x2-fill"></i>總覽</button>
+      <button type="button" class="nav-a" data-page="projects" onclick="nav('projects')"><i class="bi bi-folder2-open"></i>專案管理</button>
+      <button type="button" class="nav-a" data-page="closed" onclick="nav('closed')"><i class="bi bi-archive"></i>已結案專案</button>
+      <button type="button" class="nav-a" data-page="resources" onclick="nav('resources')"><i class="bi bi-box-seam"></i>資源控管</button>
       <div class="nav-sec" style="margin-top:8px">分析工具</div>
-      <button type="button" class="nav-a" onclick="nav('delay-sim')"><i class="bi bi-exclamation-triangle-fill"></i>延遲模擬</button>
-      <button type="button" class="nav-a" onclick="nav('kpi-dash')"><i class="bi bi-speedometer2"></i>KPI 儀表板</button>
-      <button type="button" class="nav-a" id="nav-adm" onclick="nav('admin')" style="display:none"><i class="bi bi-gear-fill"></i>系統管理</button>
-      <button type="button" class="nav-a" onclick="nav('workforce')"><i class="bi bi-people-fill"></i>人力管理</button>
+      <button type="button" class="nav-a" data-page="delay-sim" onclick="nav('delay-sim')"><i class="bi bi-exclamation-triangle-fill"></i>延遲模擬</button>
+      <button type="button" class="nav-a" data-page="kpi-dash" onclick="nav('kpi-dash')"><i class="bi bi-speedometer2"></i>KPI 儀表板</button>
+      <button type="button" class="nav-a" data-page="admin" id="nav-adm" onclick="nav('admin')" style="display:none"><i class="bi bi-gear-fill"></i>系統管理</button>
+      <button type="button" class="nav-a" data-page="workforce" onclick="nav('workforce')"><i class="bi bi-people-fill"></i>人力管理</button>
     </nav>
     <div class="sb-user">
       <div class="u-ava" id="s-ava">?</div>
@@ -269,10 +287,10 @@
       </div>
       <div class="d-flex align-items-center gap-2">
         <span id="t-clk" class="font-mono" style="font-size:11px;color:var(--n500)"></span>
-        <button class="btn-ic" onclick="refresh()" title="重新整理"><i class="bi bi-arrow-clockwise"></i></button>
+        <button class="btn-ic top-refresh" onclick="refresh()" title="重新整理" aria-label="重新整理目前頁面"><i class="bi bi-arrow-clockwise"></i><span class="top-refresh-label">更新資料</span></button>
       </div>
     </div>
-    <div id="page"></div>
+    <main id="page" aria-live="polite"></main>
   </div>
 </div>
 
@@ -500,7 +518,7 @@
   </div></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 // ============================================================
 // ★ 必改：貼上您的 GAS 部署 URL
@@ -562,6 +580,15 @@ async function doLogin(event){
   }
 }
 function lerr(m){const el=document.getElementById('lerr');el.textContent=m;el.style.display='block';}
+function togglePassword(btn){
+  const input=document.getElementById('ip');
+  const show=input.type==='password';
+  input.type=show?'text':'password';
+  btn.setAttribute('aria-label',show?'隱藏密碼':'顯示密碼');
+  btn.setAttribute('aria-pressed',String(show));
+  btn.querySelector('i').className=`bi ${show?'bi-eye-slash':'bi-eye'}`;
+  input.focus();
+}
 function showApp(){
   document.getElementById('login').style.display='none';
   document.getElementById('app-shell').style.display='flex';
@@ -590,9 +617,8 @@ function nav(page,param){
   closeNav();
   APP.page=page;
   document.querySelectorAll('.nav-a').forEach(e=>e.classList.remove('act'));
-  const idx={dashboard:0,projects:1,closed:2,resources:3,'delay-sim':4,'kpi-dash':5,admin:6,workforce:7};
-  const items=document.querySelectorAll('.nav-a');
-  if(idx[page]!==undefined&&items[idx[page]]) items[idx[page]].classList.add('act');
+  const navItem=document.querySelector(`.nav-a[data-page="${page}"]`);
+  if(navItem) navItem.classList.add('act');
   switch(page){
     case 'dashboard':   loadDash();break;
     case 'projects':    loadProjs();break;
@@ -688,10 +714,10 @@ async function loadDash(){
           </div>`:''}
         </div>
       </div>`);
+    requestAnimationFrame(loadWorkloadDash);
   }catch(e){toast('danger','載入失敗：'+e.message);}finally{ld(false);}
 }
 
-  setTimeout(loadWorkloadDash, 500);
 // ============================================================
 // 專案列表
 // ============================================================
@@ -1701,28 +1727,44 @@ async function delProject(pid,pname){
 // ============================================================
 // ★ API 呼叫工具（CORS 修正版）
 // ============================================================
-async function doGet(params){
-  const qs=new URLSearchParams(params).toString();
-  const res=await fetch(`${GAS_URL}?${qs}`,{method:'GET',redirect:'follow'});
-  if(!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-  const txt=await res.text();
-  try{return JSON.parse(txt);}catch(e){throw new Error('回應不是有效 JSON：'+txt.substring(0,100));}
+const GET_INFLIGHT=new Map();
+async function fetchJson(url,options,timeoutMs=20000){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeoutMs);
+  try{
+    const res=await fetch(url,{...options,signal:controller.signal});
+    if(!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    const txt=await res.text();
+    try{return JSON.parse(txt);}catch{throw new Error('伺服器回應格式錯誤，請稍後再試');}
+  }catch(e){
+    if(e.name==='AbortError') throw new Error('連線逾時，請檢查網路後再試');
+    throw e;
+  }finally{clearTimeout(timer);}
 }
-async function doPost(body){
-  const res=await fetch(GAS_URL,{
+function doGet(params){
+  const qs=new URLSearchParams(params).toString();
+  const url=`${GAS_URL}?${qs}`;
+  if(GET_INFLIGHT.has(url)) return GET_INFLIGHT.get(url);
+  const request=fetchJson(url,{method:'GET',redirect:'follow',cache:'no-store'})
+    .finally(()=>GET_INFLIGHT.delete(url));
+  GET_INFLIGHT.set(url,request);
+  return request;
+}
+function doPost(body){
+  return fetchJson(GAS_URL,{
     method:'POST',redirect:'follow',
     headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify(body)
   });
-  if(!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-  const txt=await res.text();
-  try{return JSON.parse(txt);}catch(e){throw new Error('回應不是有效 JSON：'+txt.substring(0,100));}
 }
 
 // ============================================================
 // UI 工具函數
 // ============================================================
-function pg(html){document.getElementById('page').innerHTML=html;}
+function pg(html){
+  document.getElementById('page').innerHTML=html;
+  window.scrollTo({top:0,behavior:'auto'});
+}
 function setTop(t,m){document.getElementById('t-title').textContent=t;document.getElementById('t-meta').textContent=m||'';}
 function canEdit(){return APP.user&&['Admin','PM'].includes(APP.user.role);}
 function esc(v){return String(v??'').replace(/[&<>\"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c];});}
@@ -1743,8 +1785,28 @@ function fdDates(p){
   }
   return fd(p.eventDate)||'日期待定';
 }
-function ld(show){const id='__ld';if(show&&!document.getElementById(id)){const el=document.createElement('div');el.id=id;el.className='ld-ov';el.innerHTML='<div class="ld-ring"></div>';document.body.appendChild(el);}else if(!show){const el=document.getElementById(id);if(el)el.remove();}}
-function toast(type,msg){const ex=document.querySelector('.t-msg');if(ex)ex.remove();const ic={success:'check-circle-fill',danger:'x-circle-fill',warning:'exclamation-triangle-fill'};const el=document.createElement('div');el.className=`alert alert-${type} alert-dismissible t-msg`;el.innerHTML=`<i class="bi bi-${ic[type]||'info-circle'} me-2"></i>${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;document.body.appendChild(el);setTimeout(()=>el.remove(),4500);}
+let LOADING_COUNT=0;
+function ld(show){
+  const id='__ld';
+  LOADING_COUNT=Math.max(0,LOADING_COUNT+(show?1:-1));
+  if(LOADING_COUNT>0&&!document.getElementById(id)){
+    const el=document.createElement('div');
+    el.id=id;el.className='ld-ov';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
+    el.innerHTML='<div class="ld-box"><div class="ld-ring"></div><span>資料載入中…</span></div>';
+    document.body.appendChild(el);
+  }else if(LOADING_COUNT===0){
+    const el=document.getElementById(id);if(el)el.remove();
+  }
+}
+function toast(type,msg){
+  const ex=document.querySelector('.t-msg');if(ex)ex.remove();
+  const ic={success:'check-circle-fill',danger:'x-circle-fill',warning:'exclamation-triangle-fill'};
+  const el=document.createElement('div');
+  el.className=`alert alert-${type} alert-dismissible t-msg`;
+  el.setAttribute('role','status');el.setAttribute('aria-live','polite');
+  el.innerHTML=`<i class="bi bi-${ic[type]||'info-circle'} me-2"></i>${esc(msg)}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button>`;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),4500);
+}
 
 // ============================================================
 // 活動日期變更 → 重算節點日期
