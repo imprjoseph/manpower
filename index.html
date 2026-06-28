@@ -265,6 +265,44 @@
       .vault-tools{align-items:stretch;flex-direction:column}
       .vault-grid{grid-template-columns:1fr}
     }
+
+    /* ProFlow 營運工具 */
+    .tool-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
+    .tool-title{font-size:20px;font-weight:750;display:flex;align-items:center;gap:9px}
+    .tool-sub{font-size:12px;color:var(--n500);margin-top:4px}
+    .tool-local-note{background:#fff8ed;border:1px solid #fed7aa;color:#9a4b06;border-radius:8px;padding:8px 11px;font-size:11px;margin-bottom:14px;display:flex;gap:7px}
+    .tool-bar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:15px}
+    .tool-search{flex:1;min-width:220px;border:1.5px solid var(--n200);border-radius:8px;padding:9px 12px;font-size:13px;background:#fff;outline:none}
+    .tool-search:focus,.tool-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-pale)}
+    .tool-select{border:1.5px solid var(--n200);border-radius:8px;padding:9px 30px 9px 11px;font-size:12px;background:#fff;outline:none}
+    .tool-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .tool-card{background:#fff;border:1px solid var(--n200);border-radius:10px;padding:16px;box-shadow:var(--sh);min-width:0}
+    .tool-card-title{font-size:14px;font-weight:750;overflow-wrap:anywhere}
+    .tool-card-meta{font-size:11px;color:var(--n500);margin-top:4px}
+    .tool-card-actions{display:flex;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--n200)}
+    .tool-pill{display:inline-flex;align-items:center;font-size:10px;font-weight:700;background:var(--accent-pale);color:var(--accent);padding:3px 8px;border-radius:99px}
+    .cal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .cal-title{font-size:17px;font-weight:750}
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;background:var(--n200);border:1px solid var(--n200);border-radius:10px;overflow:hidden}
+    .cal-weekday{background:var(--n900);color:#fff;text-align:center;padding:8px 4px;font-size:11px;font-weight:700}
+    .cal-day{background:#fff;min-height:112px;padding:7px;min-width:0}
+    .cal-day.is-other{background:#fafafa;color:#aaa}
+    .cal-day.is-today{box-shadow:inset 0 0 0 2px var(--accent)}
+    .cal-num{font-size:11px;font-family:var(--mono);margin-bottom:5px}
+    .cal-event{display:block;width:100%;border:0;border-left:3px solid var(--accent);background:var(--accent-pale);color:var(--n900);border-radius:4px;padding:4px 5px;margin-top:4px;font-size:10px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+    .process-steps{list-style:none;margin:12px 0 0;padding:0;counter-reset:steps}
+    .process-step{counter-increment:steps;display:flex;gap:9px;padding:8px 0;border-top:1px solid var(--n200);font-size:12px}
+    .process-step::before{content:counter(steps);width:22px;height:22px;flex:0 0 22px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:700}
+    .money-positive{color:#087f5b}.money-negative{color:var(--danger)}
+    .budget-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+    .budget-stat{background:#fff;border:1px solid var(--n200);border-radius:9px;padding:15px}
+    .budget-stat-label{font-size:11px;color:var(--n500)}
+    .budget-stat-value{font-size:21px;font-weight:800;font-family:var(--mono);margin-top:4px}
+    @media(max-width:1100px){.tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.budget-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:700px){
+      .tool-hero{flex-direction:column}.tool-grid{grid-template-columns:1fr}.budget-summary{grid-template-columns:1fr 1fr}
+      .calendar-grid{min-width:780px}.calendar-scroll{overflow-x:auto;border-radius:10px}
+    }
   </style>
 </head>
 <body>
@@ -298,14 +336,22 @@
       <div class="nav-sec">主要功能</div>
       <button type="button" class="nav-a act" data-page="dashboard" onclick="nav('dashboard')"><i class="bi bi-grid-1x2-fill"></i>總覽</button>
       <button type="button" class="nav-a" data-page="projects" onclick="nav('projects')"><i class="bi bi-folder2-open"></i>專案管理</button>
+      <button type="button" class="nav-a" data-page="calendar" onclick="nav('calendar')"><i class="bi bi-calendar3"></i>專案月曆</button>
       <button type="button" class="nav-a" data-page="closed" onclick="nav('closed')"><i class="bi bi-archive"></i>已結案專案</button>
       <button type="button" class="nav-a" data-page="resources" onclick="nav('resources')"><i class="bi bi-box-seam"></i>資源控管</button>
-      <div class="nav-sec" style="margin-top:8px">分析工具</div>
+      <div class="nav-sec" style="margin-top:8px">營運工具</div>
+      <button type="button" class="nav-a" data-page="cases" onclick="nav('cases')"><i class="bi bi-collection"></i>過往案例</button>
+      <button type="button" class="nav-a" data-page="forms" onclick="nav('forms')"><i class="bi bi-file-earmark-arrow-down"></i>表單中心</button>
+      <button type="button" class="nav-a" data-page="chores" onclick="nav('chores')"><i class="bi bi-list-check"></i>庶務流程</button>
+      <button type="button" class="nav-a" data-page="budget" onclick="nav('budget')"><i class="bi bi-wallet2"></i>經費結算</button>
+      <button type="button" class="nav-a" data-page="vendors" onclick="nav('vendors')"><i class="bi bi-building"></i>廠商資料庫</button>
+      <div class="nav-sec" style="margin-top:8px">分析與管理</div>
       <button type="button" class="nav-a" data-page="delay-sim" onclick="nav('delay-sim')"><i class="bi bi-exclamation-triangle-fill"></i>延遲模擬</button>
       <button type="button" class="nav-a" data-page="kpi-dash" onclick="nav('kpi-dash')"><i class="bi bi-speedometer2"></i>KPI 儀表板</button>
       <button type="button" class="nav-a" data-page="admin" id="nav-adm" onclick="nav('admin')" style="display:none"><i class="bi bi-gear-fill"></i>系統管理</button>
       <button type="button" class="nav-a" data-page="credentials" id="nav-cred" onclick="nav('credentials')" style="display:none"><i class="bi bi-shield-lock-fill"></i>帳密專區</button>
       <button type="button" class="nav-a" data-page="workforce" onclick="nav('workforce')"><i class="bi bi-people-fill"></i>人力管理</button>
+      <button type="button" class="nav-a" data-page="profile" onclick="nav('profile')"><i class="bi bi-person-circle"></i>我的帳戶</button>
     </nav>
     <div class="sb-user">
       <div class="u-ava" id="s-ava">?</div>
@@ -578,6 +624,79 @@
   </div></div>
 </div>
 
+<!-- MODAL: 表單／案例文件 -->
+<div class="modal fade" id="m-doc" tabindex="-1" aria-labelledby="doc-ttl">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="doc-ttl">上傳文件</h5><button class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button></div>
+    <div class="modal-body">
+      <input id="fd-kind" type="hidden" />
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label" for="fd-name">文件名稱 *</label><input id="fd-name" class="form-control" type="text" /></div>
+        <div class="col-md-7"><label class="form-label" for="fd-cat">分類</label><input id="fd-cat" class="form-control" type="text" placeholder="例：企劃書、請款表單" /></div>
+        <div class="col-md-5"><label class="form-label" for="fd-year">年度</label><input id="fd-year" class="form-control" type="number" min="2000" max="2100" /></div>
+        <div class="col-12"><label class="form-label" for="fd-file">選擇檔案 *</label><input id="fd-file" class="form-control" type="file" /></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button><button class="btn-ac" onclick="saveDocument()"><i class="bi bi-upload"></i>儲存文件</button></div>
+  </div></div>
+</div>
+
+<!-- MODAL: 廠商／合作對象 -->
+<div class="modal fade" id="m-vendor" tabindex="-1" aria-labelledby="vendor-ttl">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="vendor-ttl">新增廠商</h5><button class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button></div>
+    <div class="modal-body">
+      <input id="fv-id" type="hidden" />
+      <div class="row g-3">
+        <div class="col-md-8"><label class="form-label" for="fv-name">名稱 *</label><input id="fv-name" class="form-control" type="text" /></div>
+        <div class="col-md-4"><label class="form-label" for="fv-type">類型</label><input id="fv-type" class="form-control" type="text" placeholder="場地、設備…" /></div>
+        <div class="col-md-6"><label class="form-label" for="fv-contact">聯絡人</label><input id="fv-contact" class="form-control" type="text" /></div>
+        <div class="col-md-6"><label class="form-label" for="fv-phone">電話</label><input id="fv-phone" class="form-control" type="tel" /></div>
+        <div class="col-12"><label class="form-label" for="fv-email">Email</label><input id="fv-email" class="form-control" type="email" /></div>
+        <div class="col-12"><label class="form-label" for="fv-address">地址</label><input id="fv-address" class="form-control" type="text" /></div>
+        <div class="col-12"><label class="form-label" for="fv-note">備註</label><textarea id="fv-note" class="form-control" rows="2"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button><button class="btn-ac" onclick="saveVendor()"><i class="bi bi-save"></i>儲存</button></div>
+  </div></div>
+</div>
+
+<!-- MODAL: 庶務流程 -->
+<div class="modal fade" id="m-chore" tabindex="-1" aria-labelledby="chore-ttl">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="chore-ttl">新增庶務流程</h5><button class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button></div>
+    <div class="modal-body">
+      <input id="fh-id" type="hidden" />
+      <div class="row g-3">
+        <div class="col-md-8"><label class="form-label" for="fh-name">流程名稱 *</label><input id="fh-name" class="form-control" type="text" /></div>
+        <div class="col-md-4"><label class="form-label" for="fh-cat">分類</label><input id="fh-cat" class="form-control" type="text" placeholder="行政、採購…" /></div>
+        <div class="col-12"><label class="form-label" for="fh-desc">說明</label><textarea id="fh-desc" class="form-control" rows="2"></textarea></div>
+        <div class="col-12"><label class="form-label" for="fh-steps">執行步驟 *（每行一個步驟）</label><textarea id="fh-steps" class="form-control" rows="7" placeholder="提出申請&#10;主管核准&#10;執行並留存單據"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button><button class="btn-ac" onclick="saveChore()"><i class="bi bi-save"></i>儲存流程</button></div>
+  </div></div>
+</div>
+
+<!-- MODAL: 收支紀錄 -->
+<div class="modal fade" id="m-budget" tabindex="-1" aria-labelledby="budget-ttl">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="budget-ttl">新增收支</h5><button class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button></div>
+    <div class="modal-body">
+      <input id="fb-id" type="hidden" />
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label" for="fb-project">專案 *</label><select id="fb-project" class="form-control"></select></div>
+        <div class="col-md-6"><label class="form-label" for="fb-type">類型</label><select id="fb-type" class="form-control"><option value="income">收入</option><option value="expense">支出</option></select></div>
+        <div class="col-md-6"><label class="form-label" for="fb-cat">分類</label><input id="fb-cat" class="form-control" type="text" placeholder="款項、場地、設計…" /></div>
+        <div class="col-md-6"><label class="form-label" for="fb-amount">金額 *</label><input id="fb-amount" class="form-control" type="number" min="0" step="1" /></div>
+        <div class="col-md-6"><label class="form-label" for="fb-date">日期</label><input id="fb-date" class="form-control" type="date" /></div>
+        <div class="col-12"><label class="form-label" for="fb-note">備註</label><textarea id="fb-note" class="form-control" rows="2"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button><button class="btn-ac" onclick="saveBudgetEntry()"><i class="bi bi-save"></i>儲存收支</button></div>
+  </div></div>
+</div>
+
 <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 // ============================================================
@@ -686,12 +805,19 @@ function nav(page,param){
   switch(page){
     case 'dashboard':   loadDash();break;
     case 'projects':    loadProjs();break;
+    case 'calendar':    loadProjectCalendar();break;
     case 'proj-detail': loadDetail(param);break;
     case 'closed':      loadClosed();break;
     case 'resources':   loadRes();break;
+    case 'cases':       loadDocumentCenter('case');break;
+    case 'forms':       loadDocumentCenter('form');break;
+    case 'chores':      loadChores();break;
+    case 'budget':      loadBudget();break;
+    case 'vendors':     loadVendors();break;
     case 'delay-sim':   loadDelay(param);break;
     case 'admin':       loadAdmin();break;
     case 'credentials': loadCredentials();break;
+    case 'profile':     loadProfile();break;
     case 'proj-stats':  loadProjStats(param);break;
     case 'logs':        loadLogs();break;
     case 'workforce':   loadWorkforce();break;
@@ -786,39 +912,46 @@ async function loadDash(){
 // ============================================================
 // 專案列表
 // ============================================================
+let PROJECT_LIST_CACHE=[];
 async function loadProjs(){
   setTop('專案管理','所有專案');ld(true);
   try{
     const r=await doGet({action:'getProjects',token:APP.token});
     if(!r.success){apiErr(r);return;}
+    PROJECT_LIST_CACHE=r.projects||[];
+    const statuses=[...new Set(PROJECT_LIST_CACHE.map(p=>p.projectStatus).filter(Boolean))];
     pg(`<div class="d-flex justify-content-between align-items-center mb-3">
       <div class="sec-title"><i class="bi bi-folder2-open"></i>專案管理</div>
       ${canEdit()?`<button class="btn-ac" onclick="openProjM()"><i class="bi bi-plus"></i>新增專案</button>`:''}
     </div>
-    <div class="card"><table class="table table-hover mb-0" style="font-size:13px">
+    <div class="tool-bar"><input id="project-search" class="tool-search" type="search" placeholder="搜尋專案、客戶、PM…" oninput="filterProjectList()" />
+      <select id="project-status-filter" class="tool-select" onchange="filterProjectList()"><option value="">全部狀態</option>${statuses.map(s=>`<option>${esc(s)}</option>`).join('')}</select>
+      <button class="btn btn-outline-secondary btn-sm" onclick="nav('calendar')"><i class="bi bi-calendar3 me-1"></i>月曆檢視</button></div>
+    <div class="card table-responsive"><table class="table table-hover mb-0" style="font-size:13px">
       <thead style="background:var(--n100)"><tr>
         <th class="ps-3">專案名稱</th><th>客戶</th><th>類型</th>
         <th>日期</th><th>PM</th><th>狀態</th><th style="width:110px">操作</th>
       </tr></thead>
-      <tbody>${r.projects.length===0?'<tr><td colspan="7" class="text-center py-4" style="color:var(--n500)">尚無專案</td></tr>':
-        r.projects.map(p=>`<tr style="cursor:pointer" onclick="nav('proj-detail','${p.projectId}')">
-          <td class="ps-3 fw6">${p.projectName}</td>
-          <td>${p.clientName}</td>
-          <td><span style="background:rgba(232,97,10,.1);color:var(--accent);padding:2px 8px;border-radius:4px;font-size:11px">${p.eventType}</span></td>
-          <td class="font-mono" style="font-size:12px">${fdDates(p)}</td>
-          <td>${p.pmName||'-'}</td>
-          <td><span class="bdg b-prog">${p.projectStatus}</span></td>
-          <td onclick="event.stopPropagation()">
-            <div class="d-flex gap-1">
-              <button class="btn-ic" onclick="nav('proj-detail','${p.projectId}')" title="查看"><i class="bi bi-arrow-right"></i></button>
-              ${canEdit()?`<button class="btn-ic" onclick="openEditProj('${p.projectId}')" title="編輯"><i class="bi bi-pencil"></i></button>`:''}
-              ${APP.user&&APP.user.role==='Admin'?`<button class="btn-ic dl" onclick="delProject('${p.projectId}','${p.projectName}')" title="刪除"><i class="bi bi-trash"></i></button>`:''}
-            </div>
-          </td>
-        </tr>`).join('')}
-      </tbody>
+      <tbody id="project-list-body">${projectRowsHtml(PROJECT_LIST_CACHE)}</tbody>
     </table></div>`);
   }finally{ld(false);}
+}
+function projectRowsHtml(projects){
+  if(!projects.length)return'<tr><td colspan="7" class="text-center py-4" style="color:var(--n500)">沒有符合條件的專案</td></tr>';
+  return projects.map(p=>`<tr style="cursor:pointer" onclick="nav('proj-detail','${p.projectId}')">
+    <td class="ps-3 fw6">${esc(p.projectName)}</td><td>${esc(p.clientName)}</td>
+    <td><span style="background:rgba(232,97,10,.1);color:var(--accent);padding:2px 8px;border-radius:4px;font-size:11px">${esc(p.eventType)}</span></td>
+    <td class="font-mono" style="font-size:12px">${esc(fdDates(p))}</td><td>${esc(p.pmName||'-')}</td><td><span class="bdg b-prog">${esc(p.projectStatus)}</span></td>
+    <td onclick="event.stopPropagation()"><div class="d-flex gap-1">
+      <button class="btn-ic" onclick="nav('proj-detail','${p.projectId}')" title="查看"><i class="bi bi-arrow-right"></i></button>
+      ${canEdit()?`<button class="btn-ic" onclick="openEditProj('${p.projectId}')" title="編輯"><i class="bi bi-pencil"></i></button>`:''}
+      ${APP.user&&APP.user.role==='Admin'?`<button class="btn-ic dl" onclick="delProject('${p.projectId}','${esc(p.projectName)}')" title="刪除"><i class="bi bi-trash"></i></button>`:''}
+    </div></td></tr>`).join('');
+}
+function filterProjectList(){
+  const q=document.getElementById('project-search').value.trim().toLowerCase(),status=document.getElementById('project-status-filter').value;
+  const projects=PROJECT_LIST_CACHE.filter(p=>(!q||`${p.projectName} ${p.clientName} ${p.pmName} ${p.eventType}`.toLowerCase().includes(q))&&(!status||p.projectStatus===status));
+  document.getElementById('project-list-body').innerHTML=projectRowsHtml(projects);
 }
 
 async function loadDetail(pid){
@@ -3064,6 +3197,296 @@ async function loadKpiDash(pid){
     `);
   }catch(e){toast('danger','KPI載入失敗：'+e.message);}
   finally{ld(false);}
+}
+
+// ============================================================
+// ProFlow 營運工具：月曆、文件、廠商、庶務、經費
+// ============================================================
+const LOCAL_KEYS={
+  vendors:'mcs_vendors_v1',chores:'mcs_chores_v1',
+  budget:'mcs_budget_entries_v1',budgetPlans:'mcs_budget_plans_v1'
+};
+function localRead(key,fallback=[]){try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}}
+function localWrite(key,value){localStorage.setItem(key,JSON.stringify(value));}
+function newId(prefix){return crypto.randomUUID?.()||`${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;}
+function ymd(date){return`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;}
+function money(value){return new Intl.NumberFormat('zh-TW',{style:'currency',currency:'TWD',maximumFractionDigits:0}).format(Number(value)||0);}
+function projectDates(project){
+  if(project.eventDates){try{const values=JSON.parse(project.eventDates);if(Array.isArray(values)&&values.length)return values.filter(Boolean);}catch{}}
+  return project.eventDate?[project.eventDate]:[];
+}
+
+let CAL_DATE=new Date(),CAL_PROJECTS=[];
+async function loadProjectCalendar(){
+  setTop('專案月曆','依活動日期檢視所有專案');ld(true);
+  try{
+    const r=await doGet({action:'getProjects',token:APP.token});
+    if(!r.success){apiErr(r);return;}
+    CAL_PROJECTS=r.projects||[];renderProjectCalendar();
+  }catch(e){toast('danger','月曆載入失敗：'+e.message);}finally{ld(false);}
+}
+function changeCalendarMonth(delta){CAL_DATE=new Date(CAL_DATE.getFullYear(),CAL_DATE.getMonth()+delta,1);renderProjectCalendar();}
+function renderProjectCalendar(){
+  const year=CAL_DATE.getFullYear(),month=CAL_DATE.getMonth(),first=new Date(year,month,1);
+  const start=new Date(year,month,1-first.getDay()),today=ymd(new Date());
+  const events=new Map();
+  CAL_PROJECTS.forEach(project=>projectDates(project).forEach(value=>{
+    const date=ymd(new Date(value));if(!events.has(date))events.set(date,[]);events.get(date).push(project);
+  }));
+  const days=Array.from({length:42},(_,i)=>new Date(start.getFullYear(),start.getMonth(),start.getDate()+i));
+  pg(`<div class="tool-hero"><div><div class="tool-title"><i class="bi bi-calendar3"></i>專案月曆</div>
+      <div class="tool-sub">活動日期沿用 manpower 雲端專案資料，點擊項目可查看專案。</div></div>
+      <button class="btn-ac" onclick="CAL_DATE=new Date();renderProjectCalendar()"><i class="bi bi-calendar-check"></i>回到本月</button></div>
+    <div class="card p-3"><div class="cal-head">
+      <button class="btn-ic" onclick="changeCalendarMonth(-1)" aria-label="上個月"><i class="bi bi-chevron-left"></i></button>
+      <div class="cal-title">${year} 年 ${month+1} 月</div>
+      <button class="btn-ic" onclick="changeCalendarMonth(1)" aria-label="下個月"><i class="bi bi-chevron-right"></i></button>
+    </div><div class="calendar-scroll"><div class="calendar-grid">
+      ${['日','一','二','三','四','五','六'].map(day=>`<div class="cal-weekday">週${day}</div>`).join('')}
+      ${days.map(day=>{const date=ymd(day),items=events.get(date)||[];
+        return`<div class="cal-day ${day.getMonth()!==month?'is-other':''} ${date===today?'is-today':''}">
+          <div class="cal-num">${day.getDate()}</div>
+          ${items.slice(0,3).map(project=>`<button class="cal-event" onclick="nav('proj-detail','${project.projectId}')" title="${esc(project.projectName)}">${esc(project.projectName)}</button>`).join('')}
+          ${items.length>3?`<div style="font-size:9px;color:var(--n500);margin-top:3px">另 ${items.length-3} 項</div>`:''}
+        </div>`;}).join('')}
+    </div></div></div>`);
+}
+
+const BUILTIN_FORMS=[
+  {name:'專案基本資料匯入表',category:'專案',file:'專案基本資料匯入.csv',csv:'專案名稱,客戶名稱,活動類型,活動日期,地點,預估人數,PM負責人,備註\n'},
+  {name:'節點排程匯入表',category:'節點',file:'節點排程匯入.csv',csv:'專案ID,節點名稱,分類,計畫完成日,狀態,負責角色,指派人員,節點點數,備註\n'},
+  {name:'人力排班表',category:'人力',file:'人力排班表.csv',csv:'日期,專案,工作項目,人員,開始時間,結束時間,工時,備註\n'},
+  {name:'廠商詢價比較表',category:'採購',file:'廠商詢價比較表.csv',csv:'項目,廠商,聯絡人,報價,稅別,交期,付款條件,評估,備註\n'},
+  {name:'專案經費收支表',category:'經費',file:'專案經費收支表.csv',csv:'日期,專案,類型,分類,金額,對象,發票號碼,備註\n'}
+];
+let DOC_KIND='form',DOC_CACHE=[];
+function openDocDb(){
+  return new Promise((resolve,reject)=>{
+    const request=indexedDB.open('mcs_documents_v1',1);
+    request.onupgradeneeded=()=>request.result.createObjectStore('documents',{keyPath:'id'});
+    request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);
+  });
+}
+async function docList(kind){
+  const db=await openDocDb();
+  return new Promise((resolve,reject)=>{
+    const req=db.transaction('documents').objectStore('documents').getAll();
+    req.onsuccess=()=>resolve(req.result.filter(item=>item.kind===kind));req.onerror=()=>reject(req.error);
+  });
+}
+async function docPut(record){
+  const db=await openDocDb();
+  return new Promise((resolve,reject)=>{
+    const req=db.transaction('documents','readwrite').objectStore('documents').put(record);
+    req.onsuccess=()=>resolve();req.onerror=()=>reject(req.error);
+  });
+}
+async function docGet(id){
+  const db=await openDocDb();
+  return new Promise((resolve,reject)=>{
+    const req=db.transaction('documents').objectStore('documents').get(id);
+    req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+  });
+}
+async function docRemove(id){
+  const db=await openDocDb();
+  return new Promise((resolve,reject)=>{
+    const req=db.transaction('documents','readwrite').objectStore('documents').delete(id);
+    req.onsuccess=()=>resolve();req.onerror=()=>reject(req.error);
+  });
+}
+async function loadDocumentCenter(kind){
+  DOC_KIND=kind;setTop(kind==='form'?'表單中心':'過往案例',kind==='form'?'常用表單與文件下載':'企劃書與成果文件');ld(true);
+  try{DOC_CACHE=await docList(kind);renderDocumentCenter();}catch(e){toast('danger','文件載入失敗：'+e.message);}finally{ld(false);}
+}
+function renderDocumentCenter(){
+  const isForm=DOC_KIND==='form',categories=[...new Set(DOC_CACHE.map(item=>item.category).filter(Boolean))];
+  pg(`<div class="tool-hero"><div><div class="tool-title"><i class="bi bi-${isForm?'file-earmark-arrow-down':'collection'}"></i>${isForm?'表單中心':'過往案例'}</div>
+      <div class="tool-sub">${isForm?'下載常用範本，或保存公司自訂表單。':'依類型與年度保存、檢索企劃書及成果文件。'}</div></div>
+      ${canEdit()?`<button class="btn-ac" onclick="openDocumentM('${DOC_KIND}')"><i class="bi bi-upload"></i>上傳${isForm?'表單':'案例'}</button>`:''}</div>
+    <div class="tool-local-note"><i class="bi bi-device-hdd"></i><span>自訂文件保存在目前瀏覽器的本機資料庫；內建表單可直接下載。</span></div>
+    <div class="tool-bar"><input id="doc-search" class="tool-search" type="search" placeholder="搜尋名稱或分類…" oninput="filterDocuments()" />
+      <select id="doc-cat-filter" class="tool-select" onchange="filterDocuments()"><option value="">全部分類</option>${categories.map(c=>`<option>${esc(c)}</option>`).join('')}</select>
+      ${!isForm?`<select id="doc-year-filter" class="tool-select" onchange="filterDocuments()"><option value="">全部年度</option>${[...new Set(DOC_CACHE.map(i=>i.year).filter(Boolean))].sort((a,b)=>b-a).map(y=>`<option>${y}</option>`).join('')}</select>`:''}
+    </div>
+    ${isForm?`<div class="sec-title" style="font-size:14px">內建表單</div><div class="tool-grid mb-4">${BUILTIN_FORMS.map((form,i)=>`<div class="tool-card">
+      <span class="tool-pill">${form.category}</span><div class="tool-card-title mt-2">${form.name}</div><div class="tool-card-meta">CSV · 可使用 Excel 開啟</div>
+      <div class="tool-card-actions"><button class="btn-ac" onclick="downloadBuiltinForm(${i})"><i class="bi bi-download"></i>下載</button></div></div>`).join('')}</div>`:''}
+    <div class="sec-title" style="font-size:14px">${isForm?'自訂表單':'案例文件'}</div>
+    <div class="tool-grid" id="doc-list">${documentCardsHtml(DOC_CACHE)}</div>`);
+}
+function documentCardsHtml(items){
+  if(!items.length)return'<div class="empty" style="grid-column:1/-1"><i class="bi bi-file-earmark"></i><p>尚無自訂文件</p></div>';
+  return items.map(item=>`<div class="tool-card">
+    <div class="d-flex justify-content-between gap-2"><span class="tool-pill">${esc(item.category||'未分類')}</span>${item.year?`<span class="font-mono" style="font-size:11px;color:var(--n500)">${item.year}</span>`:''}</div>
+    <div class="tool-card-title mt-2">${esc(item.name)}</div><div class="tool-card-meta">${esc(item.fileName)} · ${Math.max(1,Math.round(item.size/1024))} KB</div>
+    <div class="tool-card-actions"><button class="btn-ac" onclick="downloadDocument('${item.id}')"><i class="bi bi-download"></i>下載</button>
+      ${canEdit()?`<button class="btn-ic dl" onclick="deleteDocument('${item.id}')" title="刪除"><i class="bi bi-trash"></i></button>`:''}</div>
+  </div>`).join('');
+}
+function filterDocuments(){
+  const q=document.getElementById('doc-search').value.trim().toLowerCase(),cat=document.getElementById('doc-cat-filter').value;
+  const year=document.getElementById('doc-year-filter')?.value||'';
+  const items=DOC_CACHE.filter(item=>(!q||`${item.name} ${item.category} ${item.fileName}`.toLowerCase().includes(q))&&(!cat||item.category===cat)&&(!year||String(item.year)===year));
+  document.getElementById('doc-list').innerHTML=documentCardsHtml(items);
+}
+function openDocumentM(kind){
+  document.getElementById('fd-kind').value=kind;
+  document.getElementById('doc-ttl').textContent=kind==='form'?'上傳表單':'上傳案例文件';
+  document.getElementById('fd-name').value='';document.getElementById('fd-cat').value='';
+  document.getElementById('fd-year').value=new Date().getFullYear();document.getElementById('fd-file').value='';
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('m-doc')).show();
+}
+async function saveDocument(){
+  const kind=document.getElementById('fd-kind').value,name=document.getElementById('fd-name').value.trim();
+  const file=document.getElementById('fd-file').files[0];if(!name||!file){toast('warning','請填寫名稱並選擇檔案');return;}
+  try{
+    await docPut({id:newId('doc'),kind,name,category:document.getElementById('fd-cat').value.trim(),year:Number(document.getElementById('fd-year').value)||null,fileName:file.name,size:file.size,type:file.type,blob:file,updatedAt:new Date().toISOString()});
+    bootstrap.Modal.getInstance(document.getElementById('m-doc'))?.hide();toast('success','文件已保存');loadDocumentCenter(kind);
+  }catch(e){toast('danger','文件儲存失敗：'+e.message);}
+}
+async function downloadDocument(id){
+  const item=await docGet(id);if(!item)return;
+  const url=URL.createObjectURL(item.blob),a=document.createElement('a');a.href=url;a.download=item.fileName;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function deleteDocument(id){if(!confirm('確定刪除此文件？'))return;await docRemove(id);toast('success','文件已刪除');loadDocumentCenter(DOC_KIND);}
+function downloadBuiltinForm(index){
+  const form=BUILTIN_FORMS[index],blob=new Blob(['\ufeff'+form.csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=form.file;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+let VENDORS=[];
+function loadVendors(){setTop('廠商資料庫','廠商與合作對象');VENDORS=localRead(LOCAL_KEYS.vendors,[]);renderVendors();}
+function renderVendors(){
+  const types=[...new Set(VENDORS.map(v=>v.type).filter(Boolean))].sort();
+  pg(`<div class="tool-hero"><div><div class="tool-title"><i class="bi bi-building"></i>廠商／合作對象</div><div class="tool-sub">集中管理聯絡方式與合作備註。</div></div>
+    ${canEdit()?'<button class="btn-ac" onclick="openVendorM()"><i class="bi bi-plus"></i>新增廠商</button>':''}</div>
+    <div class="tool-local-note"><i class="bi bi-device-hdd"></i><span>廠商資料保存在目前瀏覽器。</span></div>
+    <div class="tool-bar"><input id="vendor-search" class="tool-search" type="search" placeholder="搜尋名稱、聯絡人、電話…" oninput="filterVendors()" />
+      <select id="vendor-type-filter" class="tool-select" onchange="filterVendors()"><option value="">全部類型</option>${types.map(t=>`<option>${esc(t)}</option>`).join('')}</select></div>
+    <div class="tool-grid" id="vendor-list">${vendorCardsHtml(VENDORS)}</div>`);
+}
+function vendorCardsHtml(items){
+  if(!items.length)return'<div class="empty" style="grid-column:1/-1"><i class="bi bi-building"></i><p>尚無廠商資料</p></div>';
+  return items.map(v=>`<div class="tool-card"><div class="d-flex justify-content-between gap-2"><div class="tool-card-title">${esc(v.name)}</div><span class="tool-pill">${esc(v.type||'其他')}</span></div>
+    <div class="tool-card-meta">${v.contact?`<i class="bi bi-person me-1"></i>${esc(v.contact)}`:'尚未設定聯絡人'}</div>
+    <div style="font-size:12px;margin-top:11px;line-height:1.9">
+      ${v.phone?`<div><i class="bi bi-telephone me-2 text-muted"></i><a href="tel:${esc(v.phone.replace(/[^\d+()-]/g,''))}">${esc(v.phone)}</a></div>`:''}
+      ${v.email?`<div><i class="bi bi-envelope me-2 text-muted"></i><a href="mailto:${encodeURIComponent(v.email)}">${esc(v.email)}</a></div>`:''}
+      ${v.address?`<div><i class="bi bi-geo-alt me-2 text-muted"></i>${esc(v.address)}</div>`:''}
+    </div>${v.note?`<div class="tool-card-meta mt-2">${esc(v.note)}</div>`:''}
+    ${canEdit()?`<div class="tool-card-actions"><button class="btn-ic" onclick="openVendorM('${v.id}')" title="編輯"><i class="bi bi-pencil"></i></button><button class="btn-ic dl" onclick="deleteVendor('${v.id}')" title="刪除"><i class="bi bi-trash"></i></button></div>`:''}</div>`).join('');
+}
+function filterVendors(){
+  const q=document.getElementById('vendor-search').value.trim().toLowerCase(),type=document.getElementById('vendor-type-filter').value;
+  const items=VENDORS.filter(v=>(!q||`${v.name} ${v.contact} ${v.phone} ${v.email} ${v.note}`.toLowerCase().includes(q))&&(!type||v.type===type));
+  document.getElementById('vendor-list').innerHTML=vendorCardsHtml(items);
+}
+function openVendorM(id){
+  const v=id?VENDORS.find(item=>item.id===id):null;document.getElementById('vendor-ttl').textContent=v?'編輯廠商':'新增廠商';
+  ['id','name','type','contact','phone','email','address','note'].forEach(key=>document.getElementById('fv-'+key).value=v?.[key]||'');
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('m-vendor')).show();
+}
+function saveVendor(){
+  const id=document.getElementById('fv-id').value,v={id:id||newId('vendor')};
+  ['name','type','contact','phone','email','address','note'].forEach(key=>v[key]=document.getElementById('fv-'+key).value.trim());
+  if(!v.name){toast('warning','請輸入廠商名稱');return;}const index=VENDORS.findIndex(item=>item.id===v.id);
+  if(index>=0)VENDORS[index]=v;else VENDORS.unshift(v);localWrite(LOCAL_KEYS.vendors,VENDORS);
+  bootstrap.Modal.getInstance(document.getElementById('m-vendor'))?.hide();renderVendors();toast('success','廠商資料已儲存');
+}
+function deleteVendor(id){if(!confirm('確定刪除此廠商？'))return;VENDORS=VENDORS.filter(v=>v.id!==id);localWrite(LOCAL_KEYS.vendors,VENDORS);renderVendors();toast('success','廠商已刪除');}
+
+let CHORES=[];
+function loadChores(){setTop('庶務流程','公司事務標準作業流程');CHORES=localRead(LOCAL_KEYS.chores,[]);renderChores();}
+function renderChores(){
+  pg(`<div class="tool-hero"><div><div class="tool-title"><i class="bi bi-list-check"></i>庶務流程</div><div class="tool-sub">集中保存公司事務的標準執行方式。</div></div>
+      ${canEdit()?'<button class="btn-ac" onclick="openChoreM()"><i class="bi bi-plus"></i>新增流程</button>':''}</div>
+    <div class="tool-local-note"><i class="bi bi-device-hdd"></i><span>流程資料保存在目前瀏覽器。</span></div>
+    <div class="tool-grid">${choreCardsHtml(CHORES)}</div>`);
+}
+function choreCardsHtml(items){
+  if(!items.length)return'<div class="empty" style="grid-column:1/-1"><i class="bi bi-list-check"></i><p>尚無庶務流程</p></div>';
+  return items.map(chore=>`<div class="tool-card"><span class="tool-pill">${esc(chore.category||'一般')}</span><div class="tool-card-title mt-2">${esc(chore.name)}</div>
+    ${chore.description?`<div class="tool-card-meta">${esc(chore.description)}</div>`:''}
+    <ol class="process-steps">${chore.steps.map(step=>`<li class="process-step">${esc(step)}</li>`).join('')}</ol>
+    ${canEdit()?`<div class="tool-card-actions"><button class="btn-ic" onclick="openChoreM('${chore.id}')" title="編輯"><i class="bi bi-pencil"></i></button><button class="btn-ic dl" onclick="deleteChore('${chore.id}')" title="刪除"><i class="bi bi-trash"></i></button></div>`:''}</div>`).join('');
+}
+function openChoreM(id){
+  const chore=id?CHORES.find(item=>item.id===id):null;document.getElementById('chore-ttl').textContent=chore?'編輯庶務流程':'新增庶務流程';
+  document.getElementById('fh-id').value=chore?.id||'';document.getElementById('fh-name').value=chore?.name||'';
+  document.getElementById('fh-cat').value=chore?.category||'';document.getElementById('fh-desc').value=chore?.description||'';
+  document.getElementById('fh-steps').value=chore?.steps?.join('\n')||'';
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('m-chore')).show();
+}
+function saveChore(){
+  const id=document.getElementById('fh-id').value,chore={id:id||newId('chore'),name:document.getElementById('fh-name').value.trim(),category:document.getElementById('fh-cat').value.trim(),description:document.getElementById('fh-desc').value.trim(),steps:document.getElementById('fh-steps').value.split('\n').map(v=>v.trim()).filter(Boolean)};
+  if(!chore.name||!chore.steps.length){toast('warning','請填寫流程名稱與至少一個步驟');return;}const index=CHORES.findIndex(item=>item.id===chore.id);
+  if(index>=0)CHORES[index]=chore;else CHORES.unshift(chore);localWrite(LOCAL_KEYS.chores,CHORES);
+  bootstrap.Modal.getInstance(document.getElementById('m-chore'))?.hide();renderChores();toast('success','庶務流程已儲存');
+}
+function deleteChore(id){if(!confirm('確定刪除此流程？'))return;CHORES=CHORES.filter(v=>v.id!==id);localWrite(LOCAL_KEYS.chores,CHORES);renderChores();toast('success','流程已刪除');}
+
+let BUDGET_ENTRIES=[],BUDGET_PROJECTS=[],BUDGET_FILTER='';
+async function loadBudget(){
+  setTop('經費結算','專案預算與實際收支');ld(true);BUDGET_ENTRIES=localRead(LOCAL_KEYS.budget,[]);
+  try{const r=await doGet({action:'getProjects',token:APP.token});BUDGET_PROJECTS=r.success?r.projects:[];}catch{BUDGET_PROJECTS=[];}
+  renderBudget();ld(false);
+}
+function renderBudget(){
+  const plans=localRead(LOCAL_KEYS.budgetPlans,{}),entries=BUDGET_FILTER?BUDGET_ENTRIES.filter(e=>e.projectId===BUDGET_FILTER):BUDGET_ENTRIES;
+  const visibleProjects=BUDGET_FILTER?BUDGET_PROJECTS.filter(p=>p.projectId===BUDGET_FILTER):BUDGET_PROJECTS;
+  const planned=visibleProjects.reduce((sum,p)=>sum+(Number(plans[p.projectId])||0),0);
+  const income=entries.filter(e=>e.type==='income').reduce((sum,e)=>sum+Number(e.amount),0),expense=entries.filter(e=>e.type==='expense').reduce((sum,e)=>sum+Number(e.amount),0);
+  const profit=income-expense,roi=expense>0?(profit/expense*100):null;
+  pg(`<div class="tool-hero"><div><div class="tool-title"><i class="bi bi-wallet2"></i>經費結算</div><div class="tool-sub">統整專案預算、實際收入、支出與投資報酬率。</div></div>
+    ${canEdit()?'<button class="btn-ac" onclick="openBudgetM()"><i class="bi bi-plus"></i>新增收支</button>':''}</div>
+    <div class="tool-local-note"><i class="bi bi-device-hdd"></i><span>收支資料保存在目前瀏覽器；專案名稱沿用 manpower 雲端資料。</span></div>
+    <div class="tool-bar"><select class="tool-select" onchange="BUDGET_FILTER=this.value;renderBudget()"><option value="">全部專案</option>${BUDGET_PROJECTS.map(p=>`<option value="${p.projectId}" ${p.projectId===BUDGET_FILTER?'selected':''}>${esc(p.projectName)}</option>`).join('')}</select>
+      ${canEdit()?'<button class="btn btn-outline-secondary btn-sm" onclick="setBudgetPlan()"><i class="bi bi-pencil-square me-1"></i>設定專案預算</button>':''}</div>
+    <div class="budget-summary">
+      <div class="budget-stat"><div class="budget-stat-label">規劃預算</div><div class="budget-stat-value">${money(planned)}</div></div>
+      <div class="budget-stat"><div class="budget-stat-label">實際收入</div><div class="budget-stat-value money-positive">${money(income)}</div></div>
+      <div class="budget-stat"><div class="budget-stat-label">實際支出</div><div class="budget-stat-value money-negative">${money(expense)}</div></div>
+      <div class="budget-stat"><div class="budget-stat-label">實際利潤 / ROI</div><div class="budget-stat-value ${profit>=0?'money-positive':'money-negative'}">${money(profit)} <small style="font-size:11px">${roi===null?'—':roi.toFixed(1)+'%'}</small></div></div>
+    </div>
+    <div class="card table-responsive"><table class="table table-hover mb-0" style="font-size:12px"><thead><tr><th class="ps-3">日期</th><th>專案</th><th>類型</th><th>分類</th><th class="text-end">金額</th><th>備註</th><th></th></tr></thead>
+      <tbody>${entries.length?entries.sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(e=>`<tr><td class="ps-3 font-mono">${esc(e.date||'-')}</td><td>${esc(e.projectName)}</td>
+        <td><span class="bdg ${e.type==='income'?'b-norm':'b-dang'}">${e.type==='income'?'收入':'支出'}</span></td><td>${esc(e.category||'-')}</td>
+        <td class="text-end font-mono ${e.type==='income'?'money-positive':'money-negative'}">${e.type==='income'?'+':'-'}${money(e.amount)}</td><td>${esc(e.note||'')}</td>
+        <td>${canEdit()?`<button class="btn-ic dl" onclick="deleteBudgetEntry('${e.id}')" title="刪除"><i class="bi bi-trash"></i></button>`:''}</td></tr>`).join(''):'<tr><td colspan="7" class="text-center py-5 text-muted">尚無收支紀錄</td></tr>'}</tbody>
+    </table></div>`);
+}
+function setBudgetPlan(){
+  if(!BUDGET_FILTER){toast('warning','請先選擇一個專案');return;}const p=BUDGET_PROJECTS.find(item=>item.projectId===BUDGET_FILTER),plans=localRead(LOCAL_KEYS.budgetPlans,{});
+  const value=prompt(`設定「${p?.projectName||'專案'}」規劃預算`,plans[BUDGET_FILTER]||0);if(value===null)return;
+  const amount=Number(value);if(!Number.isFinite(amount)||amount<0){toast('warning','請輸入有效金額');return;}plans[BUDGET_FILTER]=amount;localWrite(LOCAL_KEYS.budgetPlans,plans);renderBudget();
+}
+function openBudgetM(){
+  if(!BUDGET_PROJECTS.length){toast('warning','目前沒有可用專案');return;}
+  document.getElementById('fb-id').value='';document.getElementById('fb-project').innerHTML=BUDGET_PROJECTS.map(p=>`<option value="${p.projectId}" ${p.projectId===BUDGET_FILTER?'selected':''}>${esc(p.projectName)}</option>`).join('');
+  document.getElementById('fb-type').value='expense';document.getElementById('fb-cat').value='';document.getElementById('fb-amount').value='';
+  document.getElementById('fb-date').value=ymd(new Date());document.getElementById('fb-note').value='';
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('m-budget')).show();
+}
+function saveBudgetEntry(){
+  const projectId=document.getElementById('fb-project').value,p=BUDGET_PROJECTS.find(item=>item.projectId===projectId),amount=Number(document.getElementById('fb-amount').value);
+  if(!projectId||!Number.isFinite(amount)||amount<=0){toast('warning','請選擇專案並輸入有效金額');return;}
+  BUDGET_ENTRIES.unshift({id:newId('budget'),projectId,projectName:p?.projectName||'',type:document.getElementById('fb-type').value,category:document.getElementById('fb-cat').value.trim(),amount,date:document.getElementById('fb-date').value,note:document.getElementById('fb-note').value.trim()});
+  localWrite(LOCAL_KEYS.budget,BUDGET_ENTRIES);bootstrap.Modal.getInstance(document.getElementById('m-budget'))?.hide();renderBudget();toast('success','收支已儲存');
+}
+function deleteBudgetEntry(id){if(!confirm('確定刪除此筆收支？'))return;BUDGET_ENTRIES=BUDGET_ENTRIES.filter(e=>e.id!==id);localWrite(LOCAL_KEYS.budget,BUDGET_ENTRIES);renderBudget();toast('success','收支已刪除');}
+
+function loadProfile(){
+  setTop('我的帳戶','登入身分與權限');
+  const user=APP.user||{};
+  pg(`<div class="tool-hero"><div><div class="tool-title"><i class="bi bi-person-circle"></i>我的帳戶</div><div class="tool-sub">目前登入資訊與可用權限。</div></div></div>
+    <div class="card" style="max-width:620px"><div class="card-body p-4">
+      <div class="d-flex align-items-center gap-3 mb-4"><div class="u-ava" style="width:54px;height:54px;font-size:20px">${esc((user.displayName||'?').charAt(0))}</div>
+        <div><div style="font-size:18px;font-weight:750">${esc(user.displayName||'-')}</div><span class="tool-pill">${esc(user.role||'-')}</span></div></div>
+      <div class="row g-3"><div class="col-md-6"><div class="vault-field-label">帳號</div><div class="mt-1">${esc(user.username||user.userId||'-')}</div></div>
+      <div class="col-md-6"><div class="vault-field-label">EMAIL</div><div class="mt-1">${esc(user.email||'-')}</div></div></div>
+      <div class="vault-note mt-4 mb-0"><i class="bi bi-info-circle"></i><span>帳號資料與角色權限由管理員在「系統管理」中維護。</span></div>
+    </div></div>`);
 }
 
 // ============================================================
