@@ -233,6 +233,38 @@
     .dates-mode-tag { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; padding:3px 8px; border-radius:99px; margin-bottom:6px; }
     .dates-mode-tag.continuous { background:rgba(46,196,182,.12); color:#0d8a82; }
     .dates-mode-tag.multi { background:rgba(232,97,10,.12); color:var(--accent); }
+
+    /* 加密帳密櫃 */
+    .vault-hero{background:linear-gradient(135deg,#1a1a1a,#303030);color:#fff;border-radius:12px;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px}
+    .vault-hero-title{font-size:19px;font-weight:750;display:flex;align-items:center;gap:9px}
+    .vault-hero-sub{font-size:12px;color:rgba(255,255,255,.62);margin-top:5px}
+    .vault-note{font-size:11px;color:var(--n500);display:flex;align-items:flex-start;gap:7px;background:#fff;border:1px solid var(--n200);border-radius:8px;padding:10px 12px;margin-bottom:16px}
+    .vault-unlock{max-width:480px;margin:50px auto;background:#fff;border:1px solid var(--n200);border-radius:12px;padding:26px;box-shadow:var(--shm)}
+    .vault-unlock-icon{width:52px;height:52px;border-radius:14px;background:var(--accent-pale);color:var(--accent);font-size:24px;display:grid;place-items:center;margin-bottom:16px}
+    .vault-tools{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+    .vault-search{position:relative;flex:1}
+    .vault-search i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--n500)}
+    .vault-search input{width:100%;border:1.5px solid var(--n200);border-radius:9px;padding:10px 12px 10px 38px;background:#fff;font-size:13px;outline:none}
+    .vault-search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-pale)}
+    .vault-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .vault-card{background:#fff;border:1px solid var(--n200);border-radius:10px;padding:16px;box-shadow:var(--sh);transition:border-color var(--tr),box-shadow var(--tr)}
+    .vault-card:hover{border-color:rgba(232,97,10,.45);box-shadow:var(--shm)}
+    .vault-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}
+    .vault-site{font-size:14px;font-weight:750;overflow-wrap:anywhere}
+    .vault-url{font-size:10px;color:var(--accent);margin-top:4px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .vault-field{background:var(--n100);border-radius:7px;padding:8px 10px;margin-top:7px}
+    .vault-field-label{font-size:9px;letter-spacing:.8px;color:var(--n500);font-weight:700}
+    .vault-field-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px}
+    .vault-value{font-size:12px;font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .vault-action{border:0;background:transparent;color:var(--n500);cursor:pointer;padding:3px}
+    .vault-action:hover{color:var(--accent)}
+    .vault-category{display:inline-flex;font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-pale);border-radius:99px;padding:2px 8px;margin-top:10px}
+    @media(max-width:1100px){.vault-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:640px){
+      .vault-hero{align-items:flex-start;flex-direction:column}
+      .vault-tools{align-items:stretch;flex-direction:column}
+      .vault-grid{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
@@ -272,6 +304,7 @@
       <button type="button" class="nav-a" data-page="delay-sim" onclick="nav('delay-sim')"><i class="bi bi-exclamation-triangle-fill"></i>延遲模擬</button>
       <button type="button" class="nav-a" data-page="kpi-dash" onclick="nav('kpi-dash')"><i class="bi bi-speedometer2"></i>KPI 儀表板</button>
       <button type="button" class="nav-a" data-page="admin" id="nav-adm" onclick="nav('admin')" style="display:none"><i class="bi bi-gear-fill"></i>系統管理</button>
+      <button type="button" class="nav-a" data-page="credentials" id="nav-cred" onclick="nav('credentials')" style="display:none"><i class="bi bi-shield-lock-fill"></i>帳密專區</button>
       <button type="button" class="nav-a" data-page="workforce" onclick="nav('workforce')"><i class="bi bi-people-fill"></i>人力管理</button>
     </nav>
     <div class="sb-user">
@@ -520,6 +553,31 @@
   </div></div>
 </div>
 
+<!-- MODAL: 加密帳密 -->
+<div class="modal fade" id="m-cred" tabindex="-1" aria-labelledby="cred-ttl">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="cred-ttl"><i class="bi bi-shield-lock me-2"></i>新增帳密</h5>
+      <button class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="fc-id" />
+      <div class="row g-3">
+        <div class="col-md-8"><label class="form-label" for="fc-site">網站／系統名稱 *</label><input id="fc-site" type="text" class="form-control" placeholder="例：活動報名後台" /></div>
+        <div class="col-md-4"><label class="form-label" for="fc-cat">分類</label><input id="fc-cat" type="text" class="form-control" placeholder="例：報名平台" /></div>
+        <div class="col-12"><label class="form-label" for="fc-url">網址</label><input id="fc-url" type="url" class="form-control" placeholder="https://example.com/login" /></div>
+        <div class="col-md-6"><label class="form-label" for="fc-user">帳號 *</label><input id="fc-user" type="text" class="form-control" autocomplete="off" /></div>
+        <div class="col-md-6"><label class="form-label" for="fc-pass">密碼 *</label><input id="fc-pass" type="password" class="form-control" autocomplete="new-password" /></div>
+        <div class="col-12"><label class="form-label" for="fc-note">備註</label><textarea id="fc-note" class="form-control" rows="2" placeholder="登入位置、注意事項等"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button>
+      <button class="btn-ac" onclick="saveCredential()"><i class="bi bi-shield-check"></i>加密儲存</button>
+    </div>
+  </div></div>
+</div>
+
 <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 // ============================================================
@@ -597,11 +655,15 @@ function showApp(){
   document.getElementById('s-name').textContent=APP.user.displayName;
   document.getElementById('s-role').textContent=APP.user.role;
   document.getElementById('s-ava').textContent=APP.user.displayName.charAt(0);
-  if(APP.user.role==='Admin') document.getElementById('nav-adm').style.display='flex';
+  if(APP.user.role==='Admin'){
+    document.getElementById('nav-adm').style.display='flex';
+    document.getElementById('nav-cred').style.display='flex';
+  }
 }
 function doLogout(){
   localStorage.removeItem('mcs_t'); localStorage.removeItem('mcs_u');
   APP.token=null; APP.user=null;
+  CRED_KEY=null;CRED_SALT=null;CRED_ITEMS=[];
   closeNav();
   document.getElementById('login').style.display='grid';
   document.getElementById('app-shell').style.display='none';
@@ -629,6 +691,7 @@ function nav(page,param){
     case 'resources':   loadRes();break;
     case 'delay-sim':   loadDelay(param);break;
     case 'admin':       loadAdmin();break;
+    case 'credentials': loadCredentials();break;
     case 'proj-stats':  loadProjStats(param);break;
     case 'logs':        loadLogs();break;
     case 'workforce':   loadWorkforce();break;
@@ -3001,6 +3064,204 @@ async function loadKpiDash(pid){
     `);
   }catch(e){toast('danger','KPI載入失敗：'+e.message);}
   finally{ld(false);}
+}
+
+// ============================================================
+// 加密帳密櫃（僅保存在目前瀏覽器，AES-GCM）
+// ============================================================
+const VAULT_STORE_KEY='mcs_credential_vault_v1';
+const VAULT_ITERATIONS=250000;
+let CRED_KEY=null,CRED_SALT=null,CRED_ITEMS=[];
+
+function bytesToB64(bytes){
+  let out='';new Uint8Array(bytes).forEach(b=>out+=String.fromCharCode(b));return btoa(out);
+}
+function b64ToBytes(value){
+  const raw=atob(value),out=new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++)out[i]=raw.charCodeAt(i);
+  return out;
+}
+async function deriveVaultKey(password,salt){
+  const material=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey(
+    {name:'PBKDF2',salt,iterations:VAULT_ITERATIONS,hash:'SHA-256'},
+    material,{name:'AES-GCM',length:256},false,['encrypt','decrypt']
+  );
+}
+async function persistCredentialVault(){
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const plain=new TextEncoder().encode(JSON.stringify(CRED_ITEMS));
+  const encrypted=await crypto.subtle.encrypt({name:'AES-GCM',iv},CRED_KEY,plain);
+  localStorage.setItem(VAULT_STORE_KEY,JSON.stringify({
+    version:1,salt:bytesToB64(CRED_SALT),iv:bytesToB64(iv),data:bytesToB64(encrypted)
+  }));
+}
+function vaultGateHtml(isSetup,message){
+  return `<div class="vault-unlock">
+    <div class="vault-unlock-icon"><i class="bi bi-${isSetup?'shield-plus':'shield-lock-fill'}"></i></div>
+    <h2 style="font-size:20px;font-weight:750;margin-bottom:6px">${isSetup?'建立加密帳密櫃':'解鎖帳密專區'}</h2>
+    <p style="font-size:12px;color:var(--n500);margin-bottom:18px">${isSetup?'設定一組專用主密碼，之後每次開啟帳密專區時使用。':'輸入帳密櫃主密碼以解密資料。'}</p>
+    ${message?`<div class="alert alert-danger py-2" style="font-size:12px">${esc(message)}</div>`:''}
+    <label class="form-label" for="vault-master">主密碼</label>
+    <input id="vault-master" type="password" class="form-control mb-3" autocomplete="new-password" onkeydown="if(event.key==='Enter')${isSetup?'setupCredentialVault()':'unlockCredentialVault()'}" />
+    ${isSetup?`<label class="form-label" for="vault-confirm">再次輸入主密碼</label>
+      <input id="vault-confirm" type="password" class="form-control mb-3" autocomplete="new-password" onkeydown="if(event.key==='Enter')setupCredentialVault()" />`:''}
+    <button class="btn-ac w-100 justify-content-center" onclick="${isSetup?'setupCredentialVault()':'unlockCredentialVault()'}">
+      <i class="bi bi-${isSetup?'shield-check':'unlock'}"></i>${isSetup?'建立帳密櫃':'解鎖'}
+    </button>
+    <div class="vault-note mt-3 mb-0"><i class="bi bi-info-circle"></i><span>主密碼不會被儲存；若遺失，帳密資料將無法復原。</span></div>
+  </div>`;
+}
+function loadCredentials(message){
+  if(!APP.user||APP.user.role!=='Admin'){toast('danger','僅管理員可以使用帳密專區');nav('dashboard');return;}
+  setTop('帳密專區','網站與系統登入資料');
+  if(!window.crypto?.subtle){
+    pg('<div class="empty"><i class="bi bi-shield-x text-danger"></i><p>瀏覽器不支援安全加密功能，無法開啟帳密專區。</p></div>');return;
+  }
+  const exists=!!localStorage.getItem(VAULT_STORE_KEY);
+  if(!CRED_KEY){pg(vaultGateHtml(!exists,message));return;}
+  renderCredentialVault();
+}
+async function setupCredentialVault(){
+  const password=document.getElementById('vault-master').value;
+  const confirmPassword=document.getElementById('vault-confirm').value;
+  if(password.length<10){loadCredentials('主密碼至少需要 10 個字元');return;}
+  if(password!==confirmPassword){loadCredentials('兩次輸入的主密碼不一致');return;}
+  try{
+    CRED_SALT=crypto.getRandomValues(new Uint8Array(16));
+    CRED_KEY=await deriveVaultKey(password,CRED_SALT);
+    CRED_ITEMS=[];
+    await persistCredentialVault();
+    renderCredentialVault();
+    toast('success','加密帳密櫃已建立');
+  }catch(e){CRED_KEY=null;loadCredentials('建立失敗：'+e.message);}
+}
+async function unlockCredentialVault(){
+  const password=document.getElementById('vault-master').value;
+  if(!password){loadCredentials('請輸入主密碼');return;}
+  try{
+    const stored=JSON.parse(localStorage.getItem(VAULT_STORE_KEY));
+    CRED_SALT=b64ToBytes(stored.salt);
+    const key=await deriveVaultKey(password,CRED_SALT);
+    const plain=await crypto.subtle.decrypt(
+      {name:'AES-GCM',iv:b64ToBytes(stored.iv)},key,b64ToBytes(stored.data)
+    );
+    const items=JSON.parse(new TextDecoder().decode(plain));
+    if(!Array.isArray(items))throw new Error('資料格式錯誤');
+    CRED_KEY=key;CRED_ITEMS=items;
+    renderCredentialVault();
+  }catch{CRED_KEY=null;CRED_ITEMS=[];loadCredentials('主密碼錯誤或資料已損毀');}
+}
+function lockCredentialVault(){
+  CRED_KEY=null;CRED_SALT=null;CRED_ITEMS=[];
+  loadCredentials();
+}
+function credentialCardsHtml(items){
+  if(!items.length)return'<div class="empty" style="grid-column:1/-1"><i class="bi bi-key"></i><p>尚無符合條件的帳密資料</p></div>';
+  return items.map(item=>{
+    const url=/^https?:\/\//i.test(item.url||'')?item.url:'';
+    return `<article class="vault-card">
+      <div class="vault-card-head">
+        <div style="min-width:0"><div class="vault-site">${esc(item.site)}</div>
+          ${url?`<a class="vault-url" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(url)}</a>`:''}
+        </div>
+        <div class="d-flex">
+          <button class="vault-action" onclick="openCredentialM('${item.id}')" title="編輯" aria-label="編輯 ${esc(item.site)}"><i class="bi bi-pencil"></i></button>
+          <button class="vault-action" onclick="deleteCredential('${item.id}')" title="刪除" aria-label="刪除 ${esc(item.site)}"><i class="bi bi-trash"></i></button>
+        </div>
+      </div>
+      <div class="vault-field"><div class="vault-field-label">帳號</div><div class="vault-field-row">
+        <span class="vault-value">${esc(item.username)}</span>
+        <button class="vault-action" onclick="copyCredential('${item.id}','username')" title="複製帳號" aria-label="複製帳號"><i class="bi bi-copy"></i></button>
+      </div></div>
+      <div class="vault-field"><div class="vault-field-label">密碼</div><div class="vault-field-row">
+        <span class="vault-value" id="cred-pass-${item.id}">••••••••</span>
+        <div class="d-flex">
+          <button class="vault-action" onclick="toggleCredentialPassword('${item.id}',this)" title="顯示密碼" aria-label="顯示密碼"><i class="bi bi-eye"></i></button>
+          <button class="vault-action" onclick="copyCredential('${item.id}','password')" title="複製密碼" aria-label="複製密碼"><i class="bi bi-copy"></i></button>
+        </div>
+      </div></div>
+      ${item.note?`<div style="font-size:11px;color:var(--n500);margin-top:9px;white-space:pre-wrap">${esc(item.note)}</div>`:''}
+      ${item.category?`<span class="vault-category">${esc(item.category)}</span>`:''}
+    </article>`;
+  }).join('');
+}
+function renderCredentialVault(){
+  pg(`<div class="vault-hero">
+      <div><div class="vault-hero-title"><i class="bi bi-shield-lock-fill"></i>加密帳密專區</div>
+        <div class="vault-hero-sub">集中管理網站與系統帳號，密碼預設隱藏。</div></div>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-light btn-sm" onclick="lockCredentialVault()"><i class="bi bi-lock me-1"></i>鎖定</button>
+        <button class="btn-ac" onclick="openCredentialM()"><i class="bi bi-plus"></i>新增帳密</button>
+      </div>
+    </div>
+    <div class="vault-note"><i class="bi bi-shield-check"></i><span>資料以 AES-GCM 加密保存在目前瀏覽器，不會寫入公開網頁或 GitHub；更換瀏覽器或裝置不會自動同步。</span></div>
+    <div class="vault-tools"><div class="vault-search"><i class="bi bi-search"></i>
+      <input id="vault-search" type="search" placeholder="搜尋網站、分類、帳號或備註…" oninput="filterCredentials()" />
+    </div><span class="bdg b-prog">${CRED_ITEMS.length} 筆</span></div>
+    <div class="vault-grid" id="vault-list">${credentialCardsHtml(CRED_ITEMS)}</div>`);
+}
+function filterCredentials(){
+  const q=document.getElementById('vault-search').value.trim().toLowerCase();
+  const filtered=!q?CRED_ITEMS:CRED_ITEMS.filter(item=>
+    [item.site,item.category,item.username,item.note,item.url].some(v=>String(v||'').toLowerCase().includes(q))
+  );
+  document.getElementById('vault-list').innerHTML=credentialCardsHtml(filtered);
+}
+function openCredentialM(id){
+  const item=id?CRED_ITEMS.find(entry=>entry.id===id):null;
+  document.getElementById('cred-ttl').innerHTML=`<i class="bi bi-shield-lock me-2"></i>${item?'編輯帳密':'新增帳密'}`;
+  document.getElementById('fc-id').value=item?.id||'';
+  document.getElementById('fc-site').value=item?.site||'';
+  document.getElementById('fc-cat').value=item?.category||'';
+  document.getElementById('fc-url').value=item?.url||'';
+  document.getElementById('fc-user').value=item?.username||'';
+  document.getElementById('fc-pass').value=item?.password||'';
+  document.getElementById('fc-note').value=item?.note||'';
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('m-cred')).show();
+}
+async function saveCredential(){
+  const id=document.getElementById('fc-id').value;
+  const entry={
+    id:id||(crypto.randomUUID?.()||('cred-'+Date.now())),
+    site:document.getElementById('fc-site').value.trim(),
+    category:document.getElementById('fc-cat').value.trim(),
+    url:document.getElementById('fc-url').value.trim(),
+    username:document.getElementById('fc-user').value.trim(),
+    password:document.getElementById('fc-pass').value,
+    note:document.getElementById('fc-note').value.trim(),
+    updatedAt:new Date().toISOString()
+  };
+  if(!entry.site||!entry.username||!entry.password){toast('warning','請填寫網站名稱、帳號與密碼');return;}
+  const index=CRED_ITEMS.findIndex(item=>item.id===entry.id);
+  if(index>=0)CRED_ITEMS[index]=entry;else CRED_ITEMS.unshift(entry);
+  try{
+    await persistCredentialVault();
+    bootstrap.Modal.getInstance(document.getElementById('m-cred'))?.hide();
+    renderCredentialVault();toast('success','帳密已加密儲存');
+  }catch(e){toast('danger','儲存失敗：'+e.message);}
+}
+async function deleteCredential(id){
+  const item=CRED_ITEMS.find(entry=>entry.id===id);if(!item)return;
+  if(!confirm(`確定刪除「${item.site}」？`))return;
+  CRED_ITEMS=CRED_ITEMS.filter(entry=>entry.id!==id);
+  await persistCredentialVault();renderCredentialVault();toast('success','帳密已刪除');
+}
+async function copyCredential(id,field){
+  const item=CRED_ITEMS.find(entry=>entry.id===id);if(!item)return;
+  try{await navigator.clipboard.writeText(item[field]||'');toast('success',field==='password'?'密碼已複製':'帳號已複製');}
+  catch{toast('danger','無法存取剪貼簿，請改用顯示後手動複製');}
+}
+function toggleCredentialPassword(id,button){
+  const item=CRED_ITEMS.find(entry=>entry.id===id),el=document.getElementById('cred-pass-'+id);
+  if(!item||!el)return;
+  const revealing=el.textContent==='••••••••';
+  el.textContent=revealing?item.password:'••••••••';
+  button.setAttribute('aria-label',revealing?'隱藏密碼':'顯示密碼');
+  button.querySelector('i').className=`bi ${revealing?'bi-eye-slash':'bi-eye'}`;
+  if(revealing)setTimeout(()=>{
+    if(document.body.contains(el)){el.textContent='••••••••';button.setAttribute('aria-label','顯示密碼');button.querySelector('i').className='bi bi-eye';}
+  },15000);
 }
 
 async function loadLogTab(){
