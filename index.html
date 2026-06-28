@@ -38,8 +38,9 @@
 
     /* SIDEBAR */
     #sidebar{width:var(--sidebar-w);min-height:100vh;background:#111;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;border-right:1px solid rgba(232,97,10,.2)}
-    .sb-brand{height:64px;padding:0 18px;border-bottom:1px solid rgba(232,97,10,.2);background:#000;display:flex;align-items:center}
-    .brand-lockup{display:flex;align-items:center;gap:10px;color:#fff;line-height:1}
+    .sb-brand{height:72px;padding:0 18px;border-bottom:1px solid rgba(232,97,10,.18);background:#fff;display:flex;align-items:center}
+    .brand-lockup{display:flex;align-items:center;width:100%}
+    .sb-brand-logo{display:block;width:100%;max-width:205px;height:auto}
     .brand-mark{color:var(--accent);font-size:30px;font-weight:900;letter-spacing:-2px}
     .brand-copy{display:flex;flex-direction:column;gap:4px}
     .brand-name{font-size:12px;font-weight:700;letter-spacing:.8px}
@@ -72,10 +73,11 @@
       radial-gradient(circle at 15% 10%,rgba(232,97,10,.11),transparent 34%),
       linear-gradient(135deg,#fafaf9 0%,#f5f5f4 100%)}
     .lg-box{background:#fff;border:1px solid #e7e5e4;border-radius:18px;padding:34px;width:min(100%,420px);box-shadow:0 20px 60px rgba(28,25,23,.1);position:relative;z-index:1}
-    .lg-brand{display:flex;align-items:center;gap:14px;margin-bottom:28px}
-    .lg-brand .brand-mark{font-size:40px}
-    .lg-brand-title{font-size:17px;font-weight:750;color:#1c1917;letter-spacing:.1px}
-    .lg-brand-sub{font-size:12px;color:#78716c;margin-top:5px}
+    .lg-brand{display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:22px;border-bottom:1px solid #e7e5e4}
+    .lg-logo{display:block;width:min(100%,300px);height:auto}
+    .lg-brand-copy{text-align:center}
+    .lg-brand-title{font-size:18px;font-weight:750;color:#1c1917;letter-spacing:.1px}
+    .lg-brand-sub{font-size:12px;color:#78716c;margin-top:4px}
     .lg-lbl{display:block;font-size:12px;font-weight:650;color:#44403c;margin-bottom:7px}
     .lg-inp{width:100%;background:#fff;border:1.5px solid #d6d3d1;border-radius:10px;padding:12px 14px;font-size:15px;color:#1c1917;font-family:var(--font);outline:none;transition:border-color var(--tr),box-shadow var(--tr)}
     .lg-inp::placeholder{color:#a8a29e}
@@ -240,8 +242,8 @@
   <div class="lg-bg"></div>
   <form class="lg-box" onsubmit="doLogin(event)">
     <div class="lg-brand">
-      <div class="brand-mark" aria-hidden="true">imPR</div>
-      <div><div class="lg-brand-title">節點控管系統</div><div class="lg-brand-sub">Milestone Control System</div></div>
+      <img class="lg-logo" src="impr-logo.png" alt="imPR 新動力公共關係顧問服務有限公司" />
+      <div class="lg-brand-copy"><div class="lg-brand-title">節點控管系統</div><div class="lg-brand-sub">Milestone Control System</div></div>
     </div>
     <div class="mb-3"><label class="lg-lbl" for="iu">帳號</label><input id="iu" name="username" type="text" class="lg-inp" placeholder="輸入帳號" autocomplete="username" autocapitalize="none" required /></div>
     <div class="mb-4"><label class="lg-lbl" for="ip">密碼</label>
@@ -259,7 +261,7 @@
 <!-- APP -->
 <div id="app-shell" style="display:none">
   <aside id="sidebar">
-    <div class="sb-brand"><div class="brand-lockup"><div class="brand-mark">imPR</div><div class="brand-copy"><span class="brand-name">MCS</span><span class="brand-sub">Project Control</span></div></div></div>
+    <div class="sb-brand"><div class="brand-lockup"><img class="sb-brand-logo" src="impr-logo.png" alt="imPR" /></div></div>
     <nav class="sb-nav" aria-label="主要選單">
       <div class="nav-sec">主要功能</div>
       <button type="button" class="nav-a act" data-page="dashboard" onclick="nav('dashboard')"><i class="bi bi-grid-1x2-fill"></i>總覽</button>
