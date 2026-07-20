@@ -119,6 +119,41 @@
     .prog{height:5px;background:var(--n200);border-radius:99px;overflow:hidden;margin:10px 0}
     .prog-f{height:100%;border-radius:99px;background:var(--accent);transition:width .5s ease}
 
+    /* PROJECT LIST */
+    .project-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px}
+    .project-page-head .sec-title{margin-bottom:3px}
+    .project-page-sub{font-size:12px;color:var(--n500)}
+    .project-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+    .project-summary-item{background:#fff;border:1px solid var(--n200);border-radius:10px;padding:13px 15px;box-shadow:var(--sh)}
+    .project-summary-label{font-size:10px;font-weight:700;letter-spacing:.7px;color:var(--n500)}
+    .project-summary-value{margin-top:3px;font:800 24px/1.2 var(--mono);color:var(--n900)}
+    .project-summary-item.is-active{border-top:3px solid var(--accent)}
+    .project-summary-item.is-done{border-top:3px solid var(--success)}
+    .project-summary-item.is-other{border-top:3px solid var(--n300)}
+    .project-tool-panel{background:#fff;border:1px solid var(--n200);border-radius:10px;padding:12px 14px;margin-bottom:18px;box-shadow:var(--sh)}
+    .project-tool-panel .tool-bar{margin:0}
+    .project-result-note{font-size:11px;color:var(--n500);white-space:nowrap;margin-left:auto}
+    .project-groups{display:grid;gap:18px}
+    .project-group{background:#fff;border:1px solid var(--n200);border-radius:10px;overflow:hidden;box-shadow:var(--sh)}
+    .project-group-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:var(--n100);border-bottom:1px solid var(--n200)}
+    .project-group-title{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:750;color:var(--n900)}
+    .project-group-title::before{content:"";width:4px;height:18px;border-radius:99px;background:var(--accent)}
+    .project-group-count{font:700 11px var(--mono);color:var(--n500);background:#fff;border:1px solid var(--n200);border-radius:99px;padding:3px 9px}
+    .project-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
+    .project-list-card{position:relative;padding:17px 18px 16px;border-bottom:1px solid var(--n200);transition:background var(--tr);cursor:pointer;min-width:0}
+    .project-list-card:nth-child(odd){border-right:1px solid var(--n200)}
+    .project-list-card:hover{background:rgba(232,97,10,.035)}
+    .project-list-main{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .project-list-name{font-size:14px;font-weight:750;line-height:1.4;color:var(--n900);overflow-wrap:anywhere}
+    .project-list-client{font-size:11px;color:var(--n500);margin-top:3px}
+    .project-list-meta{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(90px,1fr);gap:8px 14px;margin-top:14px;padding-top:12px;border-top:1px solid var(--n200)}
+    .project-meta-label{display:block;font-size:9px;font-weight:700;letter-spacing:.6px;color:var(--n500);margin-bottom:2px}
+    .project-meta-value{display:block;font-size:11px;color:var(--n700);overflow-wrap:anywhere}
+    .project-list-actions{display:flex;align-items:center;justify-content:flex-end;gap:5px;margin-top:13px}
+    .project-open-link{margin-right:auto;padding:3px 0;border:0;background:transparent;font-size:11px;font-weight:700;color:var(--accent);display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+    .project-open-link:hover{text-decoration:underline}
+    .project-empty{padding:44px 20px;text-align:center;color:var(--n500);background:#fff;border:1px dashed var(--n300);border-radius:10px}
+
     /* BADGES */
     .bdg{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;display:inline-block}
     .b-norm{background:rgba(46,196,182,.12);color:#0d8a82}
@@ -140,6 +175,35 @@
 
     /* MS ROW */
     .ms-table{width:100%}.ms-tr{transition:background .12s}.ms-tr:hover{background:var(--n100)!important}.ms-tr-alert{background:rgba(230,57,70,.05)!important}.ms-tr-alert:hover{background:rgba(230,57,70,.08)!important}
+    .ms-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:12px 16px;background:#fff;border-bottom:1px solid var(--n200)}
+    .ms-overview-item{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--n100);border:1px solid var(--n200);border-radius:8px;padding:9px 11px}
+    .ms-overview-label{font-size:10px;color:var(--n500);font-weight:700}
+    .ms-overview-value{font:800 17px/1 var(--mono);color:var(--n900)}
+    .ms-overview-item.is-active .ms-overview-value{color:var(--accent)}
+    .ms-overview-item.is-alert .ms-overview-value{color:var(--danger)}
+    .ms-overview-item.is-done .ms-overview-value{color:#0d8a82}
+    .ms-filterbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:11px 16px;background:#fff;border-bottom:1px solid var(--n200)}
+    .ms-search{flex:1;min-width:220px;border:1.5px solid var(--n200);border-radius:8px;padding:8px 11px;font-size:12px;outline:none}
+    .ms-search:focus,.ms-filter-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-pale)}
+    .ms-filter-select{border:1.5px solid var(--n200);border-radius:8px;padding:8px 28px 8px 10px;background:#fff;font-size:11px;outline:none}
+    .ms-completed-toggle{border:1px solid var(--n300);border-radius:8px;background:#fff;color:var(--n700);padding:7px 10px;font-size:11px;font-weight:650;cursor:pointer;white-space:nowrap}
+    .ms-completed-toggle.active{border-color:var(--accent);background:var(--accent-pale);color:var(--accent)}
+    .ms-filter-result{font-size:10px;color:var(--n500);white-space:nowrap}
+    .ms-tr.ms-filter-hidden{display:none}
+    .ms-category{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:5px;font-size:10px;font-weight:700;white-space:nowrap}
+    .ms-cat-0{background:#fff1e8;color:#b94700}.ms-cat-1{background:#eef2ff;color:#4338ca}.ms-cat-2{background:#f3e8ff;color:#7e22ce}
+    .ms-cat-3{background:#ecfeff;color:#0e7490}.ms-cat-4{background:#fef3c7;color:#92400e}.ms-cat-5{background:#f0fdf4;color:#15803d}
+    .ms-cat-6{background:#eff6ff;color:#1d4ed8}.ms-cat-7{background:#fdf2f8;color:#be185d}.ms-cat-8{background:#f3f4f6;color:#4b5563}
+    .ms-cat-9{background:#f5f5f4;color:#57534e}.ms-cat-10{background:#ecfdf5;color:#047857}
+    .ms-cat-11{background:#fff7ed;color:#c2410c}.ms-cat-12{background:#fef2f2;color:#b91c1c}.ms-cat-13{background:#f0fdfa;color:#0f766e}
+    .ms-category-row td{padding:0!important;background:#f8f8f7;border-top:1px solid var(--n200);border-bottom:1px solid var(--n200)}
+    .ms-category-toggle{width:100%;display:flex;align-items:center;gap:9px;padding:9px 14px;border:0;background:transparent;color:var(--n900);font-size:11px;font-weight:750;text-align:left;cursor:pointer}
+    .ms-category-toggle:hover{background:rgba(232,97,10,.045)}
+    .ms-category-toggle .ms-category-chevron{color:var(--n500);transition:transform var(--tr)}
+    .ms-category-toggle[aria-expanded="false"] .ms-category-chevron{transform:rotate(-90deg)}
+    .ms-category-total{margin-left:auto;font:700 10px var(--mono);color:var(--n500);background:#fff;border:1px solid var(--n200);border-radius:99px;padding:2px 8px}
+    .ms-category-row.ms-group-hidden{display:none}
+    .sort-mode .ms-category-row{display:none!important}
     
     
 
@@ -190,6 +254,19 @@
       .lg-box{padding:28px 22px;border-radius:14px}
       .table-responsive{border-radius:var(--r)}
       .t-msg{left:16px;right:16px;min-width:0;top:72px}
+      .project-page-head{align-items:stretch;flex-direction:column}
+      .project-page-head .btn-ac{justify-content:center}
+      .project-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .project-tool-panel .tool-bar{align-items:stretch}
+      .project-tool-panel .tool-search,.project-tool-panel .tool-select{width:100%}
+      .project-result-note{margin-left:0}
+      .project-grid{grid-template-columns:1fr}
+      .project-list-card:nth-child(odd){border-right:0}
+      .ms-overview{grid-template-columns:repeat(2,minmax(0,1fr));padding:10px 12px}
+      .ms-filterbar{align-items:stretch;padding:10px 12px}
+      .ms-search,.ms-filter-select{width:100%;min-width:0}
+      .ms-completed-toggle{flex:1}
+      .ms-filter-result{width:100%}
     }
     @media(prefers-reduced-motion:reduce){
       *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -428,9 +505,12 @@
         <div class="col-md-4"><label class="form-label">分類 Category</label>
           <select id="fm-cat" class="form-control">
             <option value="">請選擇</option>
-            <option>前期規劃</option><option>場地規劃</option><option>內容議程</option>
-            <option>宣傳報名</option><option>設計製作</option><option>輸出製作</option>
-            <option>現場執行</option><option>結案成果</option>
+            <option>專案統籌</option><option>現場佈置</option><option>燈光音響</option>
+            <option>直播作業</option><option>講師溝通</option><option>賓客接待</option>
+            <option>週邊製作</option>
+            <option>餐點安排</option><option>影音製作</option><option>專業人員</option>
+            <option>後勤作業</option><option>媒體露出</option><option>攤位聯絡</option>
+            <option>結案成果</option>
           </select>
         </div>
         <div class="col-md-6"><label class="form-label">計畫完成日</label><input id="fm-pl" type="date" class="form-control" /></div>
@@ -920,38 +1000,92 @@ async function loadProjs(){
     if(!r.success){apiErr(r);return;}
     PROJECT_LIST_CACHE=r.projects||[];
     const statuses=[...new Set(PROJECT_LIST_CACHE.map(p=>p.projectStatus).filter(Boolean))];
-    pg(`<div class="d-flex justify-content-between align-items-center mb-3">
-      <div class="sec-title"><i class="bi bi-folder2-open"></i>專案管理</div>
+    pg(`<div class="project-page-head">
+      <div><div class="sec-title"><i class="bi bi-folder2-open"></i>專案管理</div>
+      <div class="project-page-sub">依進度快速掌握專案，從客戶、類型或負責人找到工作項目。</div></div>
       ${canEdit()?`<button class="btn-ac" onclick="openProjM()"><i class="bi bi-plus"></i>新增專案</button>`:''}
     </div>
-    <div class="tool-bar"><input id="project-search" class="tool-search" type="search" placeholder="搜尋專案、客戶、PM…" oninput="filterProjectList()" />
+    <div id="project-summary">${projectSummaryHtml(PROJECT_LIST_CACHE)}</div>
+    <div class="project-tool-panel"><div class="tool-bar"><input id="project-search" class="tool-search" type="search" placeholder="搜尋專案名稱、客戶、類型或 PM…" oninput="filterProjectList()" />
       <select id="project-status-filter" class="tool-select" onchange="filterProjectList()"><option value="">全部狀態</option>${statuses.map(s=>`<option>${esc(s)}</option>`).join('')}</select>
-      <button class="btn btn-outline-secondary btn-sm" onclick="nav('calendar')"><i class="bi bi-calendar3 me-1"></i>月曆檢視</button></div>
-    <div class="card table-responsive"><table class="table table-hover mb-0" style="font-size:13px">
-      <thead style="background:var(--n100)"><tr>
-        <th class="ps-3">專案名稱</th><th>客戶</th><th>類型</th>
-        <th>日期</th><th>PM</th><th>狀態</th><th style="width:110px">操作</th>
-      </tr></thead>
-      <tbody id="project-list-body">${projectRowsHtml(PROJECT_LIST_CACHE)}</tbody>
-    </table></div>`);
+      <button class="btn btn-outline-secondary btn-sm" onclick="nav('calendar')"><i class="bi bi-calendar3 me-1"></i>月曆檢視</button>
+      <span id="project-result-note" class="project-result-note">共 ${PROJECT_LIST_CACHE.length} 個專案</span></div></div>
+    <div id="project-list-body">${projectRowsHtml(PROJECT_LIST_CACHE)}</div>`);
   }finally{ld(false);}
 }
-function projectRowsHtml(projects){
-  if(!projects.length)return'<tr><td colspan="7" class="text-center py-4" style="color:var(--n500)">沒有符合條件的專案</td></tr>';
-  return projects.map(p=>`<tr style="cursor:pointer" onclick="nav('proj-detail','${p.projectId}')">
-    <td class="ps-3 fw6">${esc(p.projectName)}</td><td>${esc(p.clientName)}</td>
-    <td><span style="background:rgba(232,97,10,.1);color:var(--accent);padding:2px 8px;border-radius:4px;font-size:11px">${esc(p.eventType)}</span></td>
-    <td class="font-mono" style="font-size:12px">${esc(fdDates(p))}</td><td>${esc(p.pmName||'-')}</td><td><span class="bdg b-prog">${esc(p.projectStatus)}</span></td>
-    <td onclick="event.stopPropagation()"><div class="d-flex gap-1">
-      <button class="btn-ic" onclick="nav('proj-detail','${p.projectId}')" title="查看"><i class="bi bi-arrow-right"></i></button>
+function projectSummaryHtml(projects){
+  const active=projects.filter(p=>p.projectStatus==='進行中').length;
+  const pending=projects.filter(p=>['未開始','規劃中'].includes(p.projectStatus)).length;
+  const done=projects.filter(p=>p.projectStatus==='結案'||p.projectStatus==='已完成').length;
+  return `<div class="project-summary">
+    <div class="project-summary-item"><div class="project-summary-label">全部專案</div><div class="project-summary-value">${projects.length}</div></div>
+    <div class="project-summary-item is-active"><div class="project-summary-label">進行中</div><div class="project-summary-value">${active}</div></div>
+    <div class="project-summary-item is-other"><div class="project-summary-label">待啟動</div><div class="project-summary-value">${pending}</div></div>
+    <div class="project-summary-item is-done"><div class="project-summary-label">已完成／結案</div><div class="project-summary-value">${done}</div></div>
+  </div>`;
+}
+function projectStatusClass(status){
+  if(status==='結案'||status==='已完成')return'b-done';
+  if(status==='延遲'||status==='卡關'||status==='暫停')return'b-dang';
+  if(status==='未開始'||status==='規劃中')return'b-pend';
+  return'b-prog';
+}
+function projectCardHtml(p){
+  return `<article class="project-list-card" onclick="nav('proj-detail','${p.projectId}')">
+    <div class="project-list-main"><div><div class="project-list-name">${esc(p.projectName)}</div><div class="project-list-client"><i class="bi bi-building me-1"></i>${esc(p.clientName||'未設定客戶')}</div></div><span class="bdg ${projectStatusClass(p.projectStatus)}">${esc(p.projectStatus||'未分類')}</span></div>
+    <div class="project-list-meta">
+      <div><span class="project-meta-label">活動日期</span><span class="project-meta-value font-mono">${esc(fdDates(p)||'-')}</span></div>
+      <div><span class="project-meta-label">專案類型</span><span class="project-meta-value">${esc(p.eventType||'-')}</span></div>
+      <div><span class="project-meta-label">負責 PM</span><span class="project-meta-value">${esc(p.pmName||'尚未指派')}</span></div>
+    </div>
+    <div class="project-list-actions" onclick="event.stopPropagation()"><button class="project-open-link" onclick="nav('proj-detail','${p.projectId}')">查看專案 <i class="bi bi-arrow-right"></i></button>
       ${canEdit()?`<button class="btn-ic" onclick="openEditProj('${p.projectId}')" title="編輯"><i class="bi bi-pencil"></i></button>`:''}
       ${APP.user&&APP.user.role==='Admin'?`<button class="btn-ic dl" onclick="delProject('${p.projectId}','${esc(p.projectName)}')" title="刪除"><i class="bi bi-trash"></i></button>`:''}
-    </div></td></tr>`).join('');
+    </div></article>`;
+}
+function projectRowsHtml(projects){
+  if(!projects.length)return'<div class="project-empty"><i class="bi bi-search d-block mb-2" style="font-size:28px"></i><div class="fw6">找不到符合條件的專案</div><div style="font-size:11px;margin-top:4px">請調整關鍵字或狀態篩選條件</div></div>';
+  const order=['進行中','規劃中','未開始','延遲','卡關','暫停','已完成','結案'];
+  const groups=new Map();
+  projects.forEach(p=>{const status=p.projectStatus||'未分類';if(!groups.has(status))groups.set(status,[]);groups.get(status).push(p);});
+  return `<div class="project-groups">${[...groups.entries()].sort((a,b)=>{
+    const ai=order.indexOf(a[0]),bi=order.indexOf(b[0]);return(ai<0?99:ai)-(bi<0?99:bi)||a[0].localeCompare(b[0]);
+  }).map(([status,items])=>`<section class="project-group"><header class="project-group-head"><div class="project-group-title">${esc(status)}</div><span class="project-group-count">${items.length} 個專案</span></header><div class="project-grid">${items.map(projectCardHtml).join('')}</div></section>`).join('')}</div>`;
 }
 function filterProjectList(){
   const q=document.getElementById('project-search').value.trim().toLowerCase(),status=document.getElementById('project-status-filter').value;
   const projects=PROJECT_LIST_CACHE.filter(p=>(!q||`${p.projectName} ${p.clientName} ${p.pmName} ${p.eventType}`.toLowerCase().includes(q))&&(!status||p.projectStatus===status));
   document.getElementById('project-list-body').innerHTML=projectRowsHtml(projects);
+  document.getElementById('project-result-note').textContent=`顯示 ${projects.length}／${PROJECT_LIST_CACHE.length} 個專案`;
+}
+
+const MILESTONE_CATEGORIES=['專案統籌','現場佈置','燈光音響','直播作業','講師溝通','賓客接待','週邊製作','餐點安排','影音製作','專業人員','後勤作業','媒體露出','攤位聯絡','結案成果'];
+function milestoneCategory(m){
+  const current=String(m.category||'').trim();
+  const text=`${current} ${m.milestoneName||''} ${m.notes||''}`.toLowerCase();
+  const rules=[
+    ['專案統籌',['專案統籌','專案會議','時程規劃','工作分配','客戶確認','流程表','工作表','run down','rundown']],
+    ['結案成果',['結案成果','撤場','照片整理','媒體報告','成效統計','檢討會','結案報告','成果報告']],
+    ['媒體露出',['媒體','新聞','記者','採訪','公關','露出','press']],
+    ['後勤作業',['後勤作業','採購財務','安全申請','採購','詢價','比價','報價','下單','合約','訂金','請款','付款','發票','結算','預算控管','保險','消防','醫護','保全','政府申請','場地申請','緊急應變','安全計畫','交通','接駁','住宿','機票','行政','倉儲','物流','清潔']],
+    ['現場佈置',['場地','場佈','佈置','背板','舞台','動線','指示牌','場勘']],
+    ['燈光音響',['燈光','音響','控台','音控','燈控','麥克風','喇叭','pa系統','av設備']],
+    ['直播作業',['直播','串流','導播','轉播','訊號測試','streaming']],
+    ['講師溝通',['講師','講者','speaker','講稿','簡報']],
+    ['賓客接待',['賓客','來賓','貴賓','邀請函','報名','報到','座位','座次','識別證','名牌','來賓名單','vip']],
+    ['週邊製作',['週邊','周邊','贈品','紀念品','印刷','輸出','製作物','設計製作']],
+    ['餐點安排',['餐點','餐飲','茶點','便當','飲料','catering']],
+    ['影音製作',['影音','影片','攝影','錄影','剪輯','後製','拍攝','動畫']],
+    ['專業人員',['司儀','主持','翻譯','口譯','同步翻譯','技師','禮賓','工作人員']],
+    ['攤位聯絡',['攤位','攤商','參展','展商']]
+  ];
+  const matched=rules.find(([,keywords])=>keywords.some(keyword=>text.includes(keyword)));
+  if(matched)return matched[0];
+  return MILESTONE_CATEGORIES.includes(current)?current:'後勤作業';
+}
+function milestoneCategoryBadge(category){
+  const index=Math.max(0,MILESTONE_CATEGORIES.indexOf(category));
+  return `<span class="ms-category ms-cat-${index}">${esc(category)}</span>`;
 }
 
 async function loadDetail(pid){
@@ -1030,6 +1164,23 @@ async function loadDetail(pid){
           }
         </div>
       </div>
+      <div class="ms-overview" aria-label="節點進度摘要">
+        <div class="ms-overview-item"><span class="ms-overview-label">全部節點</span><strong class="ms-overview-value">${tot}</strong></div>
+        <div class="ms-overview-item is-active"><span class="ms-overview-label">進行中</span><strong class="ms-overview-value">${ms.filter(m=>m.status==='進行中').length}</strong></div>
+        <div class="ms-overview-item is-alert"><span class="ms-overview-label">延遲／卡關</span><strong class="ms-overview-value">${ms.filter(m=>m.status==='延遲'||m.status==='卡關').length}</strong></div>
+        <div class="ms-overview-item is-done"><span class="ms-overview-label">已完成</span><strong class="ms-overview-value">${don}</strong></div>
+      </div>
+      <div class="ms-filterbar">
+        <input id="ms-search" class="ms-search" type="search" placeholder="搜尋節點名稱、備註或負責角色…" oninput="filterMilestoneList()" />
+        <select id="ms-status-filter" class="ms-filter-select" onchange="filterMilestoneList()">
+          <option value="">全部狀態</option>${[...new Set(ms.map(m=>m.status).filter(Boolean))].map(status=>`<option>${esc(status)}</option>`).join('')}
+        </select>
+        <select id="ms-category-filter" class="ms-filter-select" onchange="filterMilestoneList()">
+          <option value="">全部分類</option>${MILESTONE_CATEGORIES.map(category=>`<option>${esc(category)}</option>`).join('')}
+        </select>
+        <button id="ms-completed-toggle" class="ms-completed-toggle active" type="button" aria-pressed="true" onclick="toggleCompletedMilestones()"><i class="bi bi-eye-slash me-1"></i>已隱藏完成</button>
+        <span id="ms-filter-result" class="ms-filter-result"></span>
+      </div>
       <!-- 排序模式 Banner -->
       <div id="sort-banner" style="display:none;padding:10px 16px;background:rgba(232,97,10,.08);border-bottom:2px dashed var(--accent);align-items:center;justify-content:space-between;gap:12px">
         <div style="font-size:12px;color:var(--accent);font-weight:600">
@@ -1071,7 +1222,7 @@ async function loadDetail(pid){
           </thead>
           <tbody class="ms-list-wrap">
           ${ms.length===0?`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--n500)"><i class="bi bi-calendar-x" style="font-size:32px;display:block;margin-bottom:8px"></i>尚無節點</td></tr>`:(
-            ms.map((m,_mi)=>`<tr class="ms-tr ${m.status==='延遲'||m.status==='卡關'?'ms-tr-alert':''}" data-mid="${m.milestoneId}" data-sort="${m.sortOrder||9999}" draggable="false">
+            MILESTONE_CATEGORIES.map(category=>{const categoryItems=ms.filter(m=>milestoneCategory(m)===category);if(!categoryItems.length)return'';return`<tr class="ms-category-row" data-category-header="${esc(category)}"><td colspan="9"><button class="ms-category-toggle" type="button" aria-expanded="true" onclick="toggleMilestoneCategory('${category}',this)"><i class="bi bi-chevron-down ms-category-chevron"></i>${milestoneCategoryBadge(category)}<span class="ms-category-total">${categoryItems.length} 個節點</span></button></td></tr>${categoryItems.map((m,_mi)=>{const displayCategory=category;return`<tr class="ms-tr ${m.status==='延遲'||m.status==='卡關'?'ms-tr-alert':''}" data-mid="${m.milestoneId}" data-sort="${m.sortOrder||9999}" data-status="${esc(m.status||'')}" data-category="${esc(displayCategory)}" data-search="${esc(`${m.milestoneName||''} ${m.notes||''} ${m.delayReason||''} ${m.assignedRole||''} ${displayCategory}`.toLowerCase())}" draggable="false">
               <!-- 拖曳把手 -->
               <td style="padding:10px 4px 10px 12px;text-align:center;vertical-align:middle">
                 <span class="drag-handle" style="display:none;cursor:grab;color:var(--n300);font-size:15px">
@@ -1095,7 +1246,7 @@ async function loadDetail(pid){
               </td>
               <!-- 分類 -->
               <td style="padding:10px 6px;vertical-align:middle">
-                ${m.category?`<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(232,97,10,.1);color:var(--accent);white-space:nowrap;display:inline-block">${m.category}</span>`:'<span style="color:var(--n300);font-size:11px">-</span>'}
+                ${milestoneCategoryBadge(displayCategory)}
               </td>
               <!-- 計畫日期 -->
               <td style="padding:10px 6px;vertical-align:middle;font-family:var(--mono);font-size:11px;color:var(--n700)">${fd(m.plannedDate)||'-'}</td>
@@ -1123,7 +1274,7 @@ async function loadDetail(pid){
                   ${canEdit()?`<button class="btn-ic dl normal-only" onclick="delMs('${m.milestoneId}')" title="刪除"><i class="bi bi-trash"></i></button>`:''}
                 </div>
               </td>
-            </tr>`).join('')
+            </tr>`}).join('')}`}).join('')
           )}
           </tbody>
         </table>
@@ -1153,7 +1304,48 @@ async function loadDetail(pid){
         </tbody>
       </table>
     </div>`);
+    requestAnimationFrame(filterMilestoneList);
   }finally{ld(false);}
+}
+
+let HIDE_COMPLETED_MILESTONES=true;
+const COLLAPSED_MILESTONE_CATEGORIES=new Set();
+function toggleMilestoneCategory(category,button){
+  if(COLLAPSED_MILESTONE_CATEGORIES.has(category))COLLAPSED_MILESTONE_CATEGORIES.delete(category);
+  else COLLAPSED_MILESTONE_CATEGORIES.add(category);
+  if(button)button.setAttribute('aria-expanded',String(!COLLAPSED_MILESTONE_CATEGORIES.has(category)));
+  filterMilestoneList();
+}
+function toggleCompletedMilestones(){
+  HIDE_COMPLETED_MILESTONES=!HIDE_COMPLETED_MILESTONES;
+  const btn=document.getElementById('ms-completed-toggle');
+  if(btn){
+    btn.classList.toggle('active',HIDE_COMPLETED_MILESTONES);
+    btn.setAttribute('aria-pressed',String(HIDE_COMPLETED_MILESTONES));
+    btn.innerHTML=HIDE_COMPLETED_MILESTONES?'<i class="bi bi-eye-slash me-1"></i>已隱藏完成':'<i class="bi bi-eye me-1"></i>顯示已完成';
+  }
+  filterMilestoneList();
+}
+function filterMilestoneList(){
+  const list=document.querySelector('tbody.ms-list-wrap');if(!list)return;
+  const search=(document.getElementById('ms-search')?.value||'').trim().toLowerCase();
+  const status=document.getElementById('ms-status-filter')?.value||'';
+  const category=document.getElementById('ms-category-filter')?.value||'';
+  const rows=[...list.querySelectorAll('tr[data-mid]')];
+  const filtering=Boolean(search||status||category);
+  let visible=0;
+  rows.forEach(row=>{
+    const match=(!search||(row.dataset.search||'').includes(search))&&(!status||row.dataset.status===status)&&(!category||row.dataset.category===category)&&(_sortMode||!HIDE_COMPLETED_MILESTONES||row.dataset.status!=='已完成');
+    const collapsed=!_sortMode&&!filtering&&COLLAPSED_MILESTONE_CATEGORIES.has(row.dataset.category);
+    row.classList.toggle('ms-filter-hidden',!match||collapsed);if(match&&!collapsed)visible++;
+  });
+  list.querySelectorAll('tr[data-category-header]').forEach(header=>{
+    const group=header.dataset.categoryHeader;
+    const matched=rows.filter(row=>row.dataset.category===group&&!row.classList.contains('ms-filter-hidden')).length;
+    header.classList.toggle('ms-group-hidden',filtering&&matched===0);
+    const button=header.querySelector('.ms-category-toggle');if(button)button.setAttribute('aria-expanded',String(filtering||_sortMode||!COLLAPSED_MILESTONE_CATEGORIES.has(group)));
+  });
+  const result=document.getElementById('ms-filter-result');if(result)result.textContent=`顯示 ${visible}／${rows.length} 個節點`;
 }
 
 // ============================================================
@@ -2531,7 +2723,7 @@ async function openMsM(mid,pid){
         const ms=r.milestones.find(m=>m.milestoneId===mid);
         if(ms){
           document.getElementById('fm-n').value=ms.milestoneName||'';
-          document.getElementById('fm-cat').value=ms.category||'';
+          document.getElementById('fm-cat').value=milestoneCategory(ms);
           document.getElementById('fm-pl').value=ms.plannedDate||'';
           document.getElementById('fm-ac').value=ms.actualDate||'';
           document.getElementById('fm-st').value=ms.status||'未開始';
@@ -2760,6 +2952,7 @@ function toggleSortMode(pid){
     if(btn)btn.classList.add('active');
     if(banner)banner.style.display='flex';
     list.querySelectorAll('tr[data-mid]').forEach(row=>row.setAttribute('draggable','true'));
+    filterMilestoneList();
     bindDragEvents(list);
   } else { exitSortMode(false); }
 }
@@ -2774,6 +2967,7 @@ function exitSortMode(reload){
   }
   if(btn)btn.classList.remove('active');
   if(banner)banner.style.display='none';
+  filterMilestoneList();
   if(reload) loadDetail(_sortProjId||APP.proj);
 }
 function bindDragEvents(container){
