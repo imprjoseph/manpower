@@ -2126,13 +2126,41 @@ const GET_INFLIGHT=new Map();
 const GET_CACHE=new Map();
 let FORCE_API_REFRESH_UNTIL=0,API_CACHE_EPOCH=0;
 const API_CACHE_TTL={
-  getEventTypes:300000,getUsers:300000,getTemplates:180000,
-  getProjects:45000,getProjectDetail:30000,getDashboardData:30000,
-  getResources:30000,getClosedProjects:45000,getWorkload:20000,
-  getProjectStats:30000,getGanttData:30000,getProjectRiskReport:20000,
+  getEventTypes:1800000,getUsers:600000,getTemplates:600000,
+  getProjects:300000,getProjectDetail:120000,getDashboardData:60000,
+  getResources:120000,getClosedProjects:300000,getWorkload:60000,
+  getProjectStats:120000,getGanttData:120000,getProjectRiskReport:60000,
   getLogs:10000,getUserWorkload:8000,calculateDelayImpact:8000,smartAssign:5000
 };
-function clearApiCache(){API_CACHE_EPOCH++;GET_CACHE.clear();GET_INFLIGHT.clear();}
+const SESSION_API_CACHE_KEY='mcs_api_cache_v2';
+const SESSION_CACHE_ACTIONS=new Set(['getEventTypes','getUsers','getTemplates','getProjects','getProjectDetail','getDashboardData','getResources','getClosedProjects','getWorkload','getProjectStats','getGanttData','getProjectRiskReport']);
+function apiUserScope(){return String(APP.user?.userId||APP.user?.username||APP.user?.displayName||'anonymous');}
+function apiSessionKey(params){
+  const clean=Object.keys(params).filter(key=>key!=='token').sort().reduce((out,key)=>(out[key]=params[key],out),{});
+  return `${apiUserScope()}|${JSON.stringify(clean)}`;
+}
+function readSessionApiCache(params){
+  if(!SESSION_CACHE_ACTIONS.has(params.action))return null;
+  try{
+    const store=JSON.parse(sessionStorage.getItem(SESSION_API_CACHE_KEY)||'{}');
+    const entry=store[apiSessionKey(params)];
+    if(!entry||Date.now()-entry.cachedAt>=apiCacheTtl(params.action))return null;
+    return entry;
+  }catch{return null;}
+}
+function writeSessionApiCache(params,data){
+  if(!SESSION_CACHE_ACTIONS.has(params.action))return;
+  try{
+    const store=JSON.parse(sessionStorage.getItem(SESSION_API_CACHE_KEY)||'{}');
+    store[apiSessionKey(params)]={data,cachedAt:Date.now()};
+    const entries=Object.entries(store).sort((a,b)=>b[1].cachedAt-a[1].cachedAt).slice(0,30);
+    sessionStorage.setItem(SESSION_API_CACHE_KEY,JSON.stringify(Object.fromEntries(entries)));
+  }catch{}
+}
+function clearApiCache(){
+  API_CACHE_EPOCH++;GET_CACHE.clear();GET_INFLIGHT.clear();
+  try{sessionStorage.removeItem(SESSION_API_CACHE_KEY);}catch{}
+}
 function apiCacheTtl(action){return API_CACHE_TTL[action]??20000;}
 function trimApiCache(){
   if(GET_CACHE.size<=80)return;
@@ -2157,11 +2185,15 @@ function doGet(params){
   const now=Date.now(),force=now<FORCE_API_REFRESH_UNTIL;
   const cached=GET_CACHE.get(url);
   if(!force&&cached&&now-cached.cachedAt<apiCacheTtl(params.action))return Promise.resolve(cached.data);
+  const sessionCached=!force&&readSessionApiCache(params);
+  if(sessionCached){GET_CACHE.set(url,sessionCached);return Promise.resolve(sessionCached.data);}
   if(GET_INFLIGHT.has(url)) return GET_INFLIGHT.get(url);
   const requestEpoch=API_CACHE_EPOCH;
   const request=fetchJson(url,{method:'GET',redirect:'follow',cache:'no-store'})
     .then(data=>{
-      if(requestEpoch===API_CACHE_EPOCH&&data&&data.success!==false){GET_CACHE.set(url,{data,cachedAt:Date.now()});trimApiCache();}
+      if(requestEpoch===API_CACHE_EPOCH&&data&&data.success!==false){
+        GET_CACHE.set(url,{data,cachedAt:Date.now()});trimApiCache();writeSessionApiCache(params,data);
+      }
       return data;
     })
     .finally(()=>GET_INFLIGHT.delete(url));
