@@ -862,6 +862,7 @@ function showApp(){
 function doLogout(){
   localStorage.removeItem('mcs_t'); localStorage.removeItem('mcs_u');
   APP.token=null; APP.user=null;
+  clearApiCache();
   CRED_KEY=null;CRED_SALT=null;CRED_ITEMS=[];
   closeNav();
   document.getElementById('login').style.display='grid';
@@ -875,7 +876,11 @@ function closeNav(){document.body.classList.remove('nav-open');}
 // ============================================================
 // 路由
 // ============================================================
-function refresh(){nav(APP.page,APP.proj);}
+function refresh(){
+  FORCE_API_REFRESH_UNTIL=Date.now()+3000;
+  clearApiCache();
+  nav(APP.page,APP.proj);
+}
 function nav(page,param){
   closeNav();
   APP.page=page;
@@ -2118,6 +2123,21 @@ async function delProject(pid,pname){
 // ★ API 呼叫工具（CORS 修正版）
 // ============================================================
 const GET_INFLIGHT=new Map();
+const GET_CACHE=new Map();
+let FORCE_API_REFRESH_UNTIL=0,API_CACHE_EPOCH=0;
+const API_CACHE_TTL={
+  getEventTypes:300000,getUsers:300000,getTemplates:180000,
+  getProjects:45000,getProjectDetail:30000,getDashboardData:30000,
+  getResources:30000,getClosedProjects:45000,getWorkload:20000,
+  getProjectStats:30000,getGanttData:30000,getProjectRiskReport:20000,
+  getLogs:10000,getUserWorkload:8000,calculateDelayImpact:8000,smartAssign:5000
+};
+function clearApiCache(){API_CACHE_EPOCH++;GET_CACHE.clear();GET_INFLIGHT.clear();}
+function apiCacheTtl(action){return API_CACHE_TTL[action]??20000;}
+function trimApiCache(){
+  if(GET_CACHE.size<=80)return;
+  [...GET_CACHE.entries()].sort((a,b)=>a[1].cachedAt-b[1].cachedAt).slice(0,GET_CACHE.size-80).forEach(([key])=>GET_CACHE.delete(key));
+}
 async function fetchJson(url,options,timeoutMs=20000){
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),timeoutMs);
@@ -2134,18 +2154,28 @@ async function fetchJson(url,options,timeoutMs=20000){
 function doGet(params){
   const qs=new URLSearchParams(params).toString();
   const url=`${GAS_URL}?${qs}`;
+  const now=Date.now(),force=now<FORCE_API_REFRESH_UNTIL;
+  const cached=GET_CACHE.get(url);
+  if(!force&&cached&&now-cached.cachedAt<apiCacheTtl(params.action))return Promise.resolve(cached.data);
   if(GET_INFLIGHT.has(url)) return GET_INFLIGHT.get(url);
+  const requestEpoch=API_CACHE_EPOCH;
   const request=fetchJson(url,{method:'GET',redirect:'follow',cache:'no-store'})
+    .then(data=>{
+      if(requestEpoch===API_CACHE_EPOCH&&data&&data.success!==false){GET_CACHE.set(url,{data,cachedAt:Date.now()});trimApiCache();}
+      return data;
+    })
     .finally(()=>GET_INFLIGHT.delete(url));
   GET_INFLIGHT.set(url,request);
   return request;
 }
-function doPost(body){
-  return fetchJson(GAS_URL,{
+async function doPost(body){
+  const result=await fetchJson(GAS_URL,{
     method:'POST',redirect:'follow',
     headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify(body)
   });
+  if(result&&result.success)clearApiCache();
+  return result;
 }
 
 // ============================================================
@@ -2175,16 +2205,20 @@ function fdDates(p){
   }
   return fd(p.eventDate)||'日期待定';
 }
-let LOADING_COUNT=0;
+let LOADING_COUNT=0,LOADING_TIMER=null;
 function ld(show){
   const id='__ld';
   LOADING_COUNT=Math.max(0,LOADING_COUNT+(show?1:-1));
-  if(LOADING_COUNT>0&&!document.getElementById(id)){
-    const el=document.createElement('div');
-    el.id=id;el.className='ld-ov';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
-    el.innerHTML='<div class="ld-box"><div class="ld-ring"></div><span>資料載入中…</span></div>';
-    document.body.appendChild(el);
+  if(LOADING_COUNT>0&&!document.getElementById(id)&&!LOADING_TIMER){
+    LOADING_TIMER=setTimeout(()=>{
+      LOADING_TIMER=null;if(LOADING_COUNT===0||document.getElementById(id))return;
+      const el=document.createElement('div');
+      el.id=id;el.className='ld-ov';el.setAttribute('role','status');el.setAttribute('aria-live','polite');
+      el.innerHTML='<div class="ld-box"><div class="ld-ring"></div><span>資料載入中…</span></div>';
+      document.body.appendChild(el);
+    },180);
   }else if(LOADING_COUNT===0){
+    if(LOADING_TIMER){clearTimeout(LOADING_TIMER);LOADING_TIMER=null;}
     const el=document.getElementById(id);if(el)el.remove();
   }
 }
