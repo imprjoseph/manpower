@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#171717" />
   <meta name="description" content="imPR 會展專案節點與人力控管系統" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://script.google.com" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
   <style>
@@ -31,6 +32,7 @@
       --tr: .18s ease;
     }
     *{box-sizing:border-box;margin:0;padding:0}
+    html{scrollbar-gutter:stable}
     body{font-family:var(--font);background:var(--n100);color:var(--n900);overflow-x:hidden;line-height:1.5;-webkit-font-smoothing:antialiased}
     button,input,select,textarea{font:inherit}
     :focus-visible{outline:3px solid rgba(232,97,10,.28);outline-offset:2px}
@@ -135,6 +137,7 @@
     .project-result-note{font-size:11px;color:var(--n500);white-space:nowrap;margin-left:auto}
     .project-groups{display:grid;gap:18px}
     .project-group{background:#fff;border:1px solid var(--n200);border-radius:10px;overflow:hidden;box-shadow:var(--sh)}
+    .project-group,.card,.table-responsive{content-visibility:auto;contain-intrinsic-size:auto 420px}
     .project-group-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:var(--n100);border-bottom:1px solid var(--n200)}
     .project-group-title{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:750;color:var(--n900)}
     .project-group-title::before{content:"";width:4px;height:18px;border-radius:99px;background:var(--accent)}
@@ -210,6 +213,7 @@
     /* BTN */
     .btn-ac{background:var(--accent);color:#fff;border:none;border-radius:var(--r);padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:all var(--tr);display:inline-flex;align-items:center;gap:6px}
     .btn-ac:hover{background:var(--accent-lt);transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,97,10,.3)}
+    .btn-ac:disabled,.btn-ic:disabled{opacity:.58;cursor:not-allowed;transform:none;box-shadow:none}
     .btn-ic{width:30px;height:30px;border:1px solid var(--n200);border-radius:6px;background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:var(--n700);transition:all var(--tr)}
     .btn-ic:hover{background:var(--n100)}
     .btn-ic.dl:hover{background:rgba(230,57,70,.08);border-color:var(--danger);color:var(--danger)}
@@ -222,6 +226,7 @@
     .form-label{font-size:12px;font-weight:600;color:var(--n700);margin-bottom:4px}
     .form-control{border:1.5px solid var(--n200);border-radius:var(--r);padding:9px 12px;font-size:13px}
     .form-control:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,97,10,.12);outline:none}
+    .modal-footer [role="status"]{max-width:440px;line-height:1.4}
 
     /* LOADING/TOAST */
     .ld-ov{position:fixed;inset:0;background:rgba(247,247,247,.76);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:9999}
@@ -267,6 +272,17 @@
       .ms-search,.ms-filter-select{width:100%;min-width:0}
       .ms-completed-toggle{flex:1}
       .ms-filter-result{width:100%}
+      .modal-footer{align-items:stretch}
+      .modal-footer [role="status"]{width:100%;max-width:none;margin-bottom:4px}
+      .modal-footer .btn,.modal-footer .btn-ac{justify-content:center}
+    }
+    @media(max-width:480px){
+      #page{padding:12px}
+      .project-summary{grid-template-columns:1fr 1fr;gap:8px}
+      .project-summary-value{font-size:21px}
+      .stat{padding:15px;gap:12px}
+      .stat-ic{width:40px;height:40px;font-size:19px}
+      .stat-v{font-size:25px}
     }
     @media(prefers-reduced-motion:reduce){
       *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -389,7 +405,7 @@
   <div class="lg-bg"></div>
   <form class="lg-box" onsubmit="doLogin(event)">
     <div class="lg-brand">
-      <img class="lg-logo" src="impr-logo.png" alt="imPR 新動力公共關係顧問服務有限公司" />
+      <img class="lg-logo" src="impr-logo.png" alt="imPR 新動力公共關係顧問服務有限公司" decoding="async" />
       <div class="lg-brand-copy"><div class="lg-brand-title">節點控管系統</div><div class="lg-brand-sub">Milestone Control System</div></div>
     </div>
     <div class="mb-3"><label class="lg-lbl" for="iu">帳號</label><input id="iu" name="username" type="text" class="lg-inp" placeholder="輸入帳號" autocomplete="username" autocapitalize="none" required /></div>
@@ -408,7 +424,7 @@
 <!-- APP -->
 <div id="app-shell" style="display:none">
   <aside id="sidebar">
-    <div class="sb-brand"><div class="brand-lockup"><img class="sb-brand-logo" src="impr-logo.png" alt="imPR" /></div></div>
+    <div class="sb-brand"><div class="brand-lockup"><img class="sb-brand-logo" src="impr-logo.png" alt="imPR" decoding="async" /></div></div>
     <nav class="sb-nav" aria-label="主要選單">
       <div class="nav-sec">主要功能</div>
       <button type="button" class="nav-a act" data-page="dashboard" onclick="nav('dashboard')"><i class="bi bi-grid-1x2-fill"></i>總覽</button>
@@ -448,7 +464,7 @@
         <button class="btn-ic top-refresh" onclick="refresh()" title="重新整理" aria-label="重新整理目前頁面"><i class="bi bi-arrow-clockwise"></i><span class="top-refresh-label">更新資料</span></button>
       </div>
     </div>
-    <main id="page" aria-live="polite"></main>
+    <main id="page" aria-live="polite" aria-busy="false"></main>
   </div>
 </div>
 
@@ -488,8 +504,9 @@
       <div class="col-12"><label class="form-label">備註</label><textarea id="fp-nt" class="form-control" rows="2"></textarea></div>
     </div></div>
     <div class="modal-footer">
+      <div id="proj-submit-status" class="me-auto small text-muted" role="status" aria-live="polite"></div>
       <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button>
-      <button class="btn-ac" id="btn-submit-proj" onclick="submitProj()"><i class="bi bi-save me-1"></i>儲存</button>
+      <button type="button" class="btn-ac" id="btn-submit-proj" onclick="submitProj()"><i class="bi bi-save me-1"></i>儲存</button>
     </div>
   </div></div>
 </div>
@@ -790,6 +807,8 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhUkj4qok6CtSTN82wT_uM
 // 全域狀態
 // ============================================================
 const APP = {token:null,user:null,page:'dashboard',proj:null};
+let PROJECT_SUBMIT_IN_FLIGHT=false;
+let PROJECT_SUBMIT_UNCERTAIN=false;
 
 // ============================================================
 // 初始化
@@ -1011,7 +1030,7 @@ async function loadProjs(){
       ${canEdit()?`<button class="btn-ac" onclick="openProjM()"><i class="bi bi-plus"></i>新增專案</button>`:''}
     </div>
     <div id="project-summary">${projectSummaryHtml(PROJECT_LIST_CACHE)}</div>
-    <div class="project-tool-panel"><div class="tool-bar"><input id="project-search" class="tool-search" type="search" placeholder="搜尋專案名稱、客戶、類型或 PM…" oninput="filterProjectList()" />
+    <div class="project-tool-panel"><div class="tool-bar"><input id="project-search" class="tool-search" type="search" placeholder="搜尋專案名稱、客戶、類型或 PM…" oninput="scheduleProjectFilter()" />
       <select id="project-status-filter" class="tool-select" onchange="filterProjectList()"><option value="">全部狀態</option>${statuses.map(s=>`<option>${esc(s)}</option>`).join('')}</select>
       <button class="btn btn-outline-secondary btn-sm" onclick="nav('calendar')"><i class="bi bi-calendar3 me-1"></i>月曆檢視</button>
       <span id="project-result-note" class="project-result-note">共 ${PROJECT_LIST_CACHE.length} 個專案</span></div></div>
@@ -1062,6 +1081,11 @@ function filterProjectList(){
   const projects=PROJECT_LIST_CACHE.filter(p=>(!q||`${p.projectName} ${p.clientName} ${p.pmName} ${p.eventType}`.toLowerCase().includes(q))&&(!status||p.projectStatus===status));
   document.getElementById('project-list-body').innerHTML=projectRowsHtml(projects);
   document.getElementById('project-result-note').textContent=`顯示 ${projects.length}／${PROJECT_LIST_CACHE.length} 個專案`;
+}
+let PROJECT_FILTER_FRAME=0;
+function scheduleProjectFilter(){
+  cancelAnimationFrame(PROJECT_FILTER_FRAME);
+  PROJECT_FILTER_FRAME=requestAnimationFrame(filterProjectList);
 }
 
 const MILESTONE_CATEGORIES=['專案統籌','現場佈置','燈光音響','直播作業','講師溝通','賓客接待','週邊製作','餐點安排','影音製作','專業人員','後勤作業','媒體露出','攤位聯絡','結案成果'];
@@ -1989,6 +2013,7 @@ async function openProjM(){
   // 重置為「新增」模式
   document.getElementById('proj-modal-title').innerHTML='<i class="bi bi-plus-circle me-2"></i>新增專案';
   document.getElementById('btn-submit-proj').innerHTML='<i class="bi bi-plus-circle me-1"></i>建立專案並自動產生節點';
+  resetProjectSubmitState();
   document.getElementById('fp-id').value='';
   document.getElementById('fp-t').disabled=false;
   document.getElementById('fp-status-wrap').style.display='none';
@@ -2011,6 +2036,7 @@ async function openEditProj(pid){
     await loadEventTypesToSelect('fp-t', proj.eventType || '');
     document.getElementById('proj-modal-title').innerHTML='<i class="bi bi-pencil me-2"></i>編輯專案';
     document.getElementById('btn-submit-proj').innerHTML='<i class="bi bi-save me-1"></i>儲存變更';
+    resetProjectSubmitState();
     document.getElementById('fp-id').value=pid;
     document.getElementById('fp-n').value=proj.projectName||'';
     document.getElementById('fp-c').value=proj.clientName||'';
@@ -2046,6 +2072,13 @@ async function openEditProj(pid){
 }
 
 async function submitProj(){
+  if(PROJECT_SUBMIT_IN_FLIGHT)return;
+  if(PROJECT_SUBMIT_UNCERTAIN){
+    bootstrap.Modal.getInstance(document.getElementById('m-proj'))?.hide();
+    nav('projects');
+    toast('warning','請先確認專案列表；若沒有新專案，再重新送出');
+    return;
+  }
   const pid=document.getElementById('fp-id').value;
   const isEdit=!!pid;
   const n=document.getElementById('fp-n').value.trim();
@@ -2073,11 +2106,19 @@ async function submitProj(){
     notes:document.getElementById('fp-nt').value
   };
   if(isEdit) data.projectStatus=document.getElementById('fp-st').value;
-  ld(true);
+  const submitBtn=document.getElementById('btn-submit-proj');
+  const submitStatus=document.getElementById('proj-submit-status');
+  const defaultButtonHtml=submitBtn.innerHTML;
+  PROJECT_SUBMIT_IN_FLIGHT=true;
+  submitBtn.disabled=true;
+  submitBtn.setAttribute('aria-busy','true');
+  submitBtn.innerHTML=`<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>${isEdit?'儲存中':'建立中'}，請勿重複送出`;
+  submitStatus.textContent=isEdit?'正在儲存變更…':'正在建立專案與預設節點，可能需要一些時間…';
   try{
+    const requestId=createRequestId();
     const r=isEdit
-      ? await doPost({action:'updateProject',token:APP.token,projectId:pid,data})
-      : await doPost({action:'createProject',token:APP.token,data});
+      ? await doPost({action:'updateProject',token:APP.token,projectId:pid,data,requestId},{timeoutMs:45000})
+      : await doPost({action:'createProject',token:APP.token,data,requestId},{timeoutMs:90000});
     if(r.success){
       bootstrap.Modal.getInstance(document.getElementById('m-proj')).hide();
       document.getElementById('fp-t').disabled=false;
@@ -2102,9 +2143,38 @@ async function submitProj(){
         toast('success','專案建立成功！節點已自動產生');
         nav('proj-detail',r.projectId);
       }
-    } else toast('danger',r.error||'操作失敗');
-  }catch(e){toast('danger','連線失敗：'+e.message);}
-  finally{ld(false);}
+    } else{
+      submitStatus.textContent='伺服器未完成操作，請依提示修正後再試。';
+      toast('danger',r.error||'操作失敗，資料尚未送出');
+    }
+  }catch(e){
+    if(e.code==='TIMEOUT'){
+      PROJECT_SUBMIT_UNCERTAIN=true;
+      submitStatus.textContent='伺服器仍可能已完成建立，請先到專案列表確認，避免重複新增。';
+      submitBtn.innerHTML='<i class="bi bi-list-check me-1"></i>前往專案列表確認';
+      toast('warning','等待伺服器回覆逾時；請先確認專案列表，避免重複送出');
+    }else{
+      submitStatus.textContent='送出失敗，請確認網路後再試。';
+      toast('danger','連線失敗：'+e.message);
+    }
+  }finally{
+    PROJECT_SUBMIT_IN_FLIGHT=false;
+    submitBtn.removeAttribute('aria-busy');
+    submitBtn.disabled=false;
+    if(!PROJECT_SUBMIT_UNCERTAIN)submitBtn.innerHTML=defaultButtonHtml;
+  }
+}
+
+function resetProjectSubmitState(){
+  PROJECT_SUBMIT_IN_FLIGHT=false;PROJECT_SUBMIT_UNCERTAIN=false;
+  const btn=document.getElementById('btn-submit-proj'),status=document.getElementById('proj-submit-status');
+  if(btn){btn.disabled=false;btn.removeAttribute('aria-busy');}
+  if(status)status.textContent='';
+}
+
+function createRequestId(){
+  if(globalThis.crypto&&typeof globalThis.crypto.randomUUID==='function')return crypto.randomUUID();
+  return `proj-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
 async function delProject(pid,pname){
@@ -2134,33 +2204,53 @@ const API_CACHE_TTL={
 };
 const SESSION_API_CACHE_KEY='mcs_api_cache_v2';
 const SESSION_CACHE_ACTIONS=new Set(['getEventTypes','getUsers','getTemplates','getProjects','getProjectDetail','getDashboardData','getResources','getClosedProjects','getWorkload','getProjectStats','getGanttData','getProjectRiskReport']);
+let SESSION_API_CACHE=null,SESSION_CACHE_WRITE_TIMER=0;
 function apiUserScope(){return String(APP.user?.userId||APP.user?.username||APP.user?.displayName||'anonymous');}
 function apiSessionKey(params){
   const clean=Object.keys(params).filter(key=>key!=='token').sort().reduce((out,key)=>(out[key]=params[key],out),{});
   return `${apiUserScope()}|${JSON.stringify(clean)}`;
 }
+function sessionApiCache(){
+  if(SESSION_API_CACHE)return SESSION_API_CACHE;
+  try{SESSION_API_CACHE=JSON.parse(sessionStorage.getItem(SESSION_API_CACHE_KEY)||'{}');}
+  catch{SESSION_API_CACHE={};}
+  return SESSION_API_CACHE;
+}
+function flushSessionApiCache(){
+  if(SESSION_CACHE_WRITE_TIMER){clearTimeout(SESSION_CACHE_WRITE_TIMER);SESSION_CACHE_WRITE_TIMER=0;}
+  try{sessionStorage.setItem(SESSION_API_CACHE_KEY,JSON.stringify(SESSION_API_CACHE||{}));}catch{}
+}
+function scheduleSessionCacheWrite(){
+  if(SESSION_CACHE_WRITE_TIMER)return;
+  const write=()=>{SESSION_CACHE_WRITE_TIMER=0;flushSessionApiCache();};
+  SESSION_CACHE_WRITE_TIMER=setTimeout(write,250);
+}
 function readSessionApiCache(params){
   if(!SESSION_CACHE_ACTIONS.has(params.action))return null;
-  try{
-    const store=JSON.parse(sessionStorage.getItem(SESSION_API_CACHE_KEY)||'{}');
-    const entry=store[apiSessionKey(params)];
-    if(!entry||Date.now()-entry.cachedAt>=apiCacheTtl(params.action))return null;
-    return entry;
-  }catch{return null;}
+  const store=sessionApiCache(),key=apiSessionKey(params),entry=store[key];
+  if(!entry||Date.now()-entry.cachedAt>=apiCacheTtl(params.action)){
+    if(entry){delete store[key];scheduleSessionCacheWrite();}
+    return null;
+  }
+  return entry;
 }
 function writeSessionApiCache(params,data){
   if(!SESSION_CACHE_ACTIONS.has(params.action))return;
-  try{
-    const store=JSON.parse(sessionStorage.getItem(SESSION_API_CACHE_KEY)||'{}');
-    store[apiSessionKey(params)]={data,cachedAt:Date.now()};
-    const entries=Object.entries(store).sort((a,b)=>b[1].cachedAt-a[1].cachedAt).slice(0,30);
-    sessionStorage.setItem(SESSION_API_CACHE_KEY,JSON.stringify(Object.fromEntries(entries)));
-  }catch{}
+  const store=sessionApiCache();
+  store[apiSessionKey(params)]={data,cachedAt:Date.now()};
+  const entries=Object.entries(store);
+  if(entries.length>30){
+    entries.sort((a,b)=>b[1].cachedAt-a[1].cachedAt).slice(30).forEach(([key])=>delete store[key]);
+  }
+  scheduleSessionCacheWrite();
 }
 function clearApiCache(){
   API_CACHE_EPOCH++;GET_CACHE.clear();GET_INFLIGHT.clear();
+  SESSION_API_CACHE={};
+  if(SESSION_CACHE_WRITE_TIMER){clearTimeout(SESSION_CACHE_WRITE_TIMER);SESSION_CACHE_WRITE_TIMER=0;}
   try{sessionStorage.removeItem(SESSION_API_CACHE_KEY);}catch{}
 }
+addEventListener('pagehide',()=>{if(SESSION_CACHE_WRITE_TIMER)flushSessionApiCache();});
 function apiCacheTtl(action){return API_CACHE_TTL[action]??20000;}
 function trimApiCache(){
   if(GET_CACHE.size<=80)return;
@@ -2171,13 +2261,30 @@ async function fetchJson(url,options,timeoutMs=20000){
   const timer=setTimeout(()=>controller.abort(),timeoutMs);
   try{
     const res=await fetch(url,{...options,signal:controller.signal});
-    if(!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    if(!res.ok){
+      const httpError=new Error(`伺服器暫時無法處理（HTTP ${res.status}）`);
+      httpError.code=res.status>=500?'SERVER_ERROR':'HTTP_ERROR';
+      throw httpError;
+    }
     const txt=await res.text();
     try{return JSON.parse(txt);}catch{throw new Error('伺服器回應格式錯誤，請稍後再試');}
   }catch(e){
-    if(e.name==='AbortError') throw new Error('連線逾時，請檢查網路後再試');
+    if(e.name==='AbortError'){
+      const timeoutError=new Error('伺服器回覆逾時');
+      timeoutError.code='TIMEOUT';
+      throw timeoutError;
+    }
     throw e;
   }finally{clearTimeout(timer);}
+}
+async function fetchGetWithRetry(url,options,timeoutMs=20000){
+  try{return await fetchJson(url,options,timeoutMs);}
+  catch(error){
+    const retryable=error.code==='SERVER_ERROR'||(!error.code&&error instanceof TypeError);
+    if(!retryable)throw error;
+    await new Promise(resolve=>setTimeout(resolve,350));
+    return fetchJson(url,options,timeoutMs);
+  }
 }
 function doGet(params){
   const qs=new URLSearchParams(params).toString();
@@ -2189,7 +2296,7 @@ function doGet(params){
   if(sessionCached){GET_CACHE.set(url,sessionCached);return Promise.resolve(sessionCached.data);}
   if(GET_INFLIGHT.has(url)) return GET_INFLIGHT.get(url);
   const requestEpoch=API_CACHE_EPOCH;
-  const request=fetchJson(url,{method:'GET',redirect:'follow',cache:'no-store'})
+  const request=fetchGetWithRetry(url,{method:'GET',redirect:'follow',cache:'no-store'})
     .then(data=>{
       if(requestEpoch===API_CACHE_EPOCH&&data&&data.success!==false){
         GET_CACHE.set(url,{data,cachedAt:Date.now()});trimApiCache();writeSessionApiCache(params,data);
@@ -2200,12 +2307,12 @@ function doGet(params){
   GET_INFLIGHT.set(url,request);
   return request;
 }
-async function doPost(body){
+async function doPost(body,{timeoutMs=30000}={}){
   const result=await fetchJson(GAS_URL,{
     method:'POST',redirect:'follow',
     headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify(body)
-  });
+  },timeoutMs);
   if(result&&result.success)clearApiCache();
   return result;
 }
@@ -2241,6 +2348,8 @@ let LOADING_COUNT=0,LOADING_TIMER=null;
 function ld(show){
   const id='__ld';
   LOADING_COUNT=Math.max(0,LOADING_COUNT+(show?1:-1));
+  const page=document.getElementById('page');
+  if(page)page.setAttribute('aria-busy',String(LOADING_COUNT>0));
   if(LOADING_COUNT>0&&!document.getElementById(id)&&!LOADING_TIMER){
     LOADING_TIMER=setTimeout(()=>{
       LOADING_TIMER=null;if(LOADING_COUNT===0||document.getElementById(id))return;
@@ -3519,19 +3628,30 @@ const BUILTIN_FORMS=[
   {name:'廠商詢價比較表',category:'採購',file:'廠商詢價比較表.csv',csv:'項目,廠商,聯絡人,報價,稅別,交期,付款條件,評估,備註\n'},
   {name:'專案經費收支表',category:'經費',file:'專案經費收支表.csv',csv:'日期,專案,類型,分類,金額,對象,發票號碼,備註\n'}
 ];
-let DOC_KIND='form',DOC_CACHE=[];
+let DOC_KIND='form',DOC_CACHE=[],DOC_DB_PROMISE=null;
 function openDocDb(){
-  return new Promise((resolve,reject)=>{
-    const request=indexedDB.open('mcs_documents_v1',1);
-    request.onupgradeneeded=()=>request.result.createObjectStore('documents',{keyPath:'id'});
-    request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);
+  if(DOC_DB_PROMISE)return DOC_DB_PROMISE;
+  DOC_DB_PROMISE=new Promise((resolve,reject)=>{
+    const request=indexedDB.open('mcs_documents_v1',2);
+    request.onupgradeneeded=()=>{
+      const store=request.result.objectStoreNames.contains('documents')
+        ? request.transaction.objectStore('documents')
+        : request.result.createObjectStore('documents',{keyPath:'id'});
+      if(!store.indexNames.contains('kind'))store.createIndex('kind','kind',{unique:false});
+    };
+    request.onsuccess=()=>{
+      request.result.onversionchange=()=>{request.result.close();DOC_DB_PROMISE=null;};
+      resolve(request.result);
+    };
+    request.onerror=()=>{DOC_DB_PROMISE=null;reject(request.error);};
   });
+  return DOC_DB_PROMISE;
 }
 async function docList(kind){
   const db=await openDocDb();
   return new Promise((resolve,reject)=>{
-    const req=db.transaction('documents').objectStore('documents').getAll();
-    req.onsuccess=()=>resolve(req.result.filter(item=>item.kind===kind));req.onerror=()=>reject(req.error);
+    const req=db.transaction('documents').objectStore('documents').index('kind').getAll(kind);
+    req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
   });
 }
 async function docPut(record){
@@ -3601,15 +3721,20 @@ async function saveDocument(){
   const kind=document.getElementById('fd-kind').value,name=document.getElementById('fd-name').value.trim();
   const file=document.getElementById('fd-file').files[0];if(!name||!file){toast('warning','請填寫名稱並選擇檔案');return;}
   try{
-    await docPut({id:newId('doc'),kind,name,category:document.getElementById('fd-cat').value.trim(),year:Number(document.getElementById('fd-year').value)||null,fileName:file.name,size:file.size,type:file.type,blob:file,updatedAt:new Date().toISOString()});
-    bootstrap.Modal.getInstance(document.getElementById('m-doc'))?.hide();toast('success','文件已保存');loadDocumentCenter(kind);
+    const record={id:newId('doc'),kind,name,category:document.getElementById('fd-cat').value.trim(),year:Number(document.getElementById('fd-year').value)||null,fileName:file.name,size:file.size,type:file.type,blob:file,updatedAt:new Date().toISOString()};
+    await docPut(record);
+    if(DOC_KIND===kind){DOC_CACHE.unshift(record);renderDocumentCenter();}
+    bootstrap.Modal.getInstance(document.getElementById('m-doc'))?.hide();toast('success','文件已保存');
   }catch(e){toast('danger','文件儲存失敗：'+e.message);}
 }
 async function downloadDocument(id){
   const item=await docGet(id);if(!item)return;
   const url=URL.createObjectURL(item.blob),a=document.createElement('a');a.href=url;a.download=item.fileName;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-async function deleteDocument(id){if(!confirm('確定刪除此文件？'))return;await docRemove(id);toast('success','文件已刪除');loadDocumentCenter(DOC_KIND);}
+async function deleteDocument(id){
+  if(!confirm('確定刪除此文件？'))return;
+  await docRemove(id);DOC_CACHE=DOC_CACHE.filter(item=>item.id!==id);renderDocumentCenter();toast('success','文件已刪除');
+}
 function downloadBuiltinForm(index){
   const form=BUILTIN_FORMS[index],blob=new Blob(['\ufeff'+form.csv],{type:'text/csv;charset=utf-8'});
   const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=form.file;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
