@@ -1901,17 +1901,35 @@ function attachmentSopFields(item){
       :'不適用時填寫原因，由 PM 確認後關閉'
   };
 }
+function attachmentPhaseFor(weeksBefore){
+  const weeks=Number(weeksBefore||0);
+  if(weeks>=9)return '立案啟動';
+  if(weeks>=5)return '規劃確認';
+  if(weeks>=2)return '執行籌備';
+  if(weeks>0)return '行前準備';
+  if(weeks===0)return '活動當天';
+  return '結案追蹤';
+}
 function attachmentTemplatesFor(eventType){
   const merged=[...ATTACHMENT_COMMON_TEMPLATES,...detailedAttachmentTasksFor(eventType),...(ATTACHMENT_TYPE_TEMPLATES[eventType]||[])];
-  const unique=merged.filter((item,index)=>merged.findIndex(other=>other.milestoneName===item.milestoneName)===index);
-  return unique
-    .map((item,index)=>{
+  const normalized=merged.map(item=>{
       const sourceName=item.milestoneName;
       return {...item,eventType,milestoneName:ATTACHMENT_SHORT_NAME_BY_NAME[sourceName]||sourceName,
         category:ATTACHMENT_CATEGORY_BY_NAME[sourceName]||item.category||milestoneCategory(item),
-        sortOrder:index+1,affectedMilestones:shortAttachmentAffectedNames(item.affectedMilestones),
+        phase:attachmentPhaseFor(item.weeksBefore),
+        affectedMilestones:shortAttachmentAffectedNames(item.affectedMilestones),
         ...attachmentSopFields(item)};
     });
+  const unique=normalized.filter((item,index)=>normalized.findIndex(other=>other.milestoneName===item.milestoneName)===index);
+  const categoryOrder=new Map(MILESTONE_CATEGORIES.map((name,index)=>[name,index]));
+  return unique
+    .sort((a,b)=>
+      Number(b.weeksBefore||0)-Number(a.weeksBefore||0) ||
+      Number(Boolean(b.isCritical))-Number(Boolean(a.isCritical)) ||
+      (categoryOrder.get(a.category)??999)-(categoryOrder.get(b.category)??999) ||
+      String(a.milestoneName).localeCompare(String(b.milestoneName),'zh-Hant')
+    )
+    .map((item,index)=>({...item,sortOrder:index+1}));
 }
 
 async function loadEventTypesCache(){
