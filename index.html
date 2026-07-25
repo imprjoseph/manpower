@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#171717" />
   <meta name="description" content="imPR 會展專案節點與人力控管系統" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://script.google.com" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
   <style>
@@ -31,6 +32,7 @@
       --tr: .18s ease;
     }
     *{box-sizing:border-box;margin:0;padding:0}
+    html{scrollbar-gutter:stable}
     body{font-family:var(--font);background:var(--n100);color:var(--n900);overflow-x:hidden;line-height:1.5;-webkit-font-smoothing:antialiased}
     button,input,select,textarea{font:inherit}
     :focus-visible{outline:3px solid rgba(232,97,10,.28);outline-offset:2px}
@@ -135,6 +137,7 @@
     .project-result-note{font-size:11px;color:var(--n500);white-space:nowrap;margin-left:auto}
     .project-groups{display:grid;gap:18px}
     .project-group{background:#fff;border:1px solid var(--n200);border-radius:10px;overflow:hidden;box-shadow:var(--sh)}
+    .project-group,.card,.table-responsive{content-visibility:auto;contain-intrinsic-size:auto 420px}
     .project-group-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:var(--n100);border-bottom:1px solid var(--n200)}
     .project-group-title{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:750;color:var(--n900)}
     .project-group-title::before{content:"";width:4px;height:18px;border-radius:99px;background:var(--accent)}
@@ -210,6 +213,7 @@
     /* BTN */
     .btn-ac{background:var(--accent);color:#fff;border:none;border-radius:var(--r);padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:all var(--tr);display:inline-flex;align-items:center;gap:6px}
     .btn-ac:hover{background:var(--accent-lt);transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,97,10,.3)}
+    .btn-ac:disabled,.btn-ic:disabled{opacity:.58;cursor:not-allowed;transform:none;box-shadow:none}
     .btn-ic{width:30px;height:30px;border:1px solid var(--n200);border-radius:6px;background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:var(--n700);transition:all var(--tr)}
     .btn-ic:hover{background:var(--n100)}
     .btn-ic.dl:hover{background:rgba(230,57,70,.08);border-color:var(--danger);color:var(--danger)}
@@ -222,6 +226,7 @@
     .form-label{font-size:12px;font-weight:600;color:var(--n700);margin-bottom:4px}
     .form-control{border:1.5px solid var(--n200);border-radius:var(--r);padding:9px 12px;font-size:13px}
     .form-control:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,97,10,.12);outline:none}
+    .modal-footer [role="status"]{max-width:440px;line-height:1.4}
 
     /* LOADING/TOAST */
     .ld-ov{position:fixed;inset:0;background:rgba(247,247,247,.76);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:9999}
@@ -267,6 +272,17 @@
       .ms-search,.ms-filter-select{width:100%;min-width:0}
       .ms-completed-toggle{flex:1}
       .ms-filter-result{width:100%}
+      .modal-footer{align-items:stretch}
+      .modal-footer [role="status"]{width:100%;max-width:none;margin-bottom:4px}
+      .modal-footer .btn,.modal-footer .btn-ac{justify-content:center}
+    }
+    @media(max-width:480px){
+      #page{padding:12px}
+      .project-summary{grid-template-columns:1fr 1fr;gap:8px}
+      .project-summary-value{font-size:21px}
+      .stat{padding:15px;gap:12px}
+      .stat-ic{width:40px;height:40px;font-size:19px}
+      .stat-v{font-size:25px}
     }
     @media(prefers-reduced-motion:reduce){
       *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -389,7 +405,7 @@
   <div class="lg-bg"></div>
   <form class="lg-box" onsubmit="doLogin(event)">
     <div class="lg-brand">
-      <img class="lg-logo" src="impr-logo.png" alt="imPR 新動力公共關係顧問服務有限公司" />
+      <img class="lg-logo" src="impr-logo.png" alt="imPR 新動力公共關係顧問服務有限公司" decoding="async" />
       <div class="lg-brand-copy"><div class="lg-brand-title">節點控管系統</div><div class="lg-brand-sub">Milestone Control System</div></div>
     </div>
     <div class="mb-3"><label class="lg-lbl" for="iu">帳號</label><input id="iu" name="username" type="text" class="lg-inp" placeholder="輸入帳號" autocomplete="username" autocapitalize="none" required /></div>
@@ -408,7 +424,7 @@
 <!-- APP -->
 <div id="app-shell" style="display:none">
   <aside id="sidebar">
-    <div class="sb-brand"><div class="brand-lockup"><img class="sb-brand-logo" src="impr-logo.png" alt="imPR" /></div></div>
+    <div class="sb-brand"><div class="brand-lockup"><img class="sb-brand-logo" src="impr-logo.png" alt="imPR" decoding="async" /></div></div>
     <nav class="sb-nav" aria-label="主要選單">
       <div class="nav-sec">主要功能</div>
       <button type="button" class="nav-a act" data-page="dashboard" onclick="nav('dashboard')"><i class="bi bi-grid-1x2-fill"></i>總覽</button>
@@ -448,7 +464,7 @@
         <button class="btn-ic top-refresh" onclick="refresh()" title="重新整理" aria-label="重新整理目前頁面"><i class="bi bi-arrow-clockwise"></i><span class="top-refresh-label">更新資料</span></button>
       </div>
     </div>
-    <main id="page" aria-live="polite"></main>
+    <main id="page" aria-live="polite" aria-busy="false"></main>
   </div>
 </div>
 
@@ -488,8 +504,9 @@
       <div class="col-12"><label class="form-label">備註</label><textarea id="fp-nt" class="form-control" rows="2"></textarea></div>
     </div></div>
     <div class="modal-footer">
+      <div id="proj-submit-status" class="me-auto small text-muted" role="status" aria-live="polite"></div>
       <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button>
-      <button class="btn-ac" id="btn-submit-proj" onclick="submitProj()"><i class="bi bi-save me-1"></i>儲存</button>
+      <button type="button" class="btn-ac" id="btn-submit-proj" onclick="submitProj()"><i class="bi bi-save me-1"></i>儲存</button>
     </div>
   </div></div>
 </div>
@@ -602,6 +619,25 @@
         <div class="col-md-6">
           <label class="form-label">活動類型 *</label>
           <select id="ft-et" class="form-control"><option value="">載入中...</option></select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">工作分類 *</label>
+          <select id="ft-cat" class="form-control">
+            <option value="專案統籌">專案統籌</option>
+            <option value="現場佈置">現場佈置</option>
+            <option value="燈光音響">燈光音響</option>
+            <option value="直播作業">直播作業</option>
+            <option value="講師溝通">講師溝通</option>
+            <option value="賓客接待">賓客接待</option>
+            <option value="週邊製作">週邊製作</option>
+            <option value="餐點安排">餐點安排</option>
+            <option value="影音製作">影音製作</option>
+            <option value="專業人員">專業人員</option>
+            <option value="後勤作業">後勤作業</option>
+            <option value="媒體露出">媒體露出</option>
+            <option value="攤位聯絡">攤位聯絡</option>
+            <option value="結案成果">結案成果</option>
+          </select>
         </div>
         <div class="col-md-3">
           <label class="form-label">活動前幾週完成</label>
@@ -790,6 +826,8 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhUkj4qok6CtSTN82wT_uM
 // 全域狀態
 // ============================================================
 const APP = {token:null,user:null,page:'dashboard',proj:null};
+let PROJECT_SUBMIT_IN_FLIGHT=false;
+let PROJECT_SUBMIT_UNCERTAIN=false;
 
 // ============================================================
 // 初始化
@@ -1011,7 +1049,7 @@ async function loadProjs(){
       ${canEdit()?`<button class="btn-ac" onclick="openProjM()"><i class="bi bi-plus"></i>新增專案</button>`:''}
     </div>
     <div id="project-summary">${projectSummaryHtml(PROJECT_LIST_CACHE)}</div>
-    <div class="project-tool-panel"><div class="tool-bar"><input id="project-search" class="tool-search" type="search" placeholder="搜尋專案名稱、客戶、類型或 PM…" oninput="filterProjectList()" />
+    <div class="project-tool-panel"><div class="tool-bar"><input id="project-search" class="tool-search" type="search" placeholder="搜尋專案名稱、客戶、類型或 PM…" oninput="scheduleProjectFilter()" />
       <select id="project-status-filter" class="tool-select" onchange="filterProjectList()"><option value="">全部狀態</option>${statuses.map(s=>`<option>${esc(s)}</option>`).join('')}</select>
       <button class="btn btn-outline-secondary btn-sm" onclick="nav('calendar')"><i class="bi bi-calendar3 me-1"></i>月曆檢視</button>
       <span id="project-result-note" class="project-result-note">共 ${PROJECT_LIST_CACHE.length} 個專案</span></div></div>
@@ -1062,6 +1100,11 @@ function filterProjectList(){
   const projects=PROJECT_LIST_CACHE.filter(p=>(!q||`${p.projectName} ${p.clientName} ${p.pmName} ${p.eventType}`.toLowerCase().includes(q))&&(!status||p.projectStatus===status));
   document.getElementById('project-list-body').innerHTML=projectRowsHtml(projects);
   document.getElementById('project-result-note').textContent=`顯示 ${projects.length}／${PROJECT_LIST_CACHE.length} 個專案`;
+}
+let PROJECT_FILTER_FRAME=0;
+function scheduleProjectFilter(){
+  cancelAnimationFrame(PROJECT_FILTER_FRAME);
+  PROJECT_FILTER_FRAME=requestAnimationFrame(filterProjectList);
 }
 
 const MILESTONE_CATEGORIES=['專案統籌','現場佈置','燈光音響','直播作業','講師溝通','賓客接待','週邊製作','餐點安排','影音製作','專業人員','後勤作業','媒體露出','攤位聯絡','結案成果'];
@@ -1487,7 +1530,469 @@ function switchAdminTab(tab){
 }
 
 // ── 模版節點管理 ──────────────────────────────────────────────
-let EVENT_TYPES = ['國際研討會','記者會','體驗活動','跨島大型活動','一般會議'];
+let EVENT_TYPES = ['研討會／論壇','一般會議／審查會','教育訓練／工作坊','記者會／媒體活動','典禮／頒獎／揭牌','展覽／攤位／園遊會','巡迴宣導／說明會','線上會議／直播講座','跨區多梯次活動','體驗／互動活動'];
+
+const ATTACHMENT_EVENT_TYPES=[
+  {eventTypeName:'研討會／論壇',description:'研討會、論壇、國際會議、學術會議與海報展示',sortOrder:10},
+  {eventTypeName:'一般會議／審查會',description:'工作會議、策略會議、期中期末審查與成果報告會議',sortOrder:20},
+  {eventTypeName:'教育訓練／工作坊',description:'教育訓練、工作坊、養成班與企業參訪',sortOrder:30},
+  {eventTypeName:'記者會／媒體活動',description:'記者會、發布會、媒體茶敘、採訪與媒體接待',sortOrder:40},
+  {eventTypeName:'典禮／頒獎／揭牌',description:'頒獎、揭牌、剪綵、啟動、誓師與周年慶典',sortOrder:50},
+  {eventTypeName:'展覽／攤位／園遊會',description:'展覽、成果展示、攤位、園遊會與戶外展陳',sortOrder:60},
+  {eventTypeName:'巡迴宣導／說明會',description:'公務宣導、徵案說明會、基地台說明會與巡迴活動',sortOrder:70},
+  {eventTypeName:'線上會議／直播講座',description:'視訊會議、線上論壇、直播講座與混合式活動',sortOrder:80},
+  {eventTypeName:'跨區多梯次活動',description:'跨縣市、跨島、多場次或多梯次之系列活動',sortOrder:90},
+  {eventTypeName:'體驗／互動活動',description:'體驗營、開放日、參訪、路演與民眾互動活動',sortOrder:100}
+];
+const ATTACHMENT_COMMON_TEMPLATES=[
+  {milestoneName:'需求、目標與驗收條件定稿',weeksBefore:12,isCritical:true,defaultRole:'PM',description:'完成需求訪談紀錄，明列活動目的、對象、人數、地點、預算、交付物、決策窗口與驗收證明；由客戶書面確認。',affectedMilestones:'報價與採購時程確認,場地檔期與合約確認'},
+  {milestoneName:'報價、預算與採購時程確認',weeksBefore:10,isCritical:true,defaultRole:'PM',description:'完成成本拆解、三方詢比價或議價紀錄、稅金、付款節點、請購期限與預備金；確認不超出核定預算。',affectedMilestones:'供應商規格、報價與交期鎖定'},
+  {milestoneName:'場地檔期、合約與進撤場確認',weeksBefore:10,isCritical:true,defaultRole:'PM',description:'取得場地報價與平面圖，確認容量、布撤場時段、押金、施工證、貨梯卸貨、停車、噪音及消防限制，完成訂金或申請。',affectedMilestones:'場勘與場配技術圖定稿'},
+  {milestoneName:'主視覺與製作物清單定稿',weeksBefore:8,isCritical:false,defaultRole:'PM',description:'確認主視覺方向及全套尺寸清單，至少涵蓋背板、報到、議程、指標、識別證、桌牌與數位版位；建立版本與完稿日期。',affectedMilestones:'設計完稿、校對與送印'},
+  {milestoneName:'供應商規格、報價與交期鎖定',weeksBefore:7,isCritical:true,defaultRole:'PM',description:'逐項確認燈光、音響、影像、攝錄影、場佈、餐飲與人力規格；指定現場負責人、到場時間、交付標準與備援。',affectedMilestones:'場勘與場配技術圖定稿,進場安裝、全系統測試與彩排'},
+  {milestoneName:'流程表、工作分組與責任人確認',weeksBefore:5,isCritical:true,defaultRole:'PM',description:'完成分鐘級流程表與 RACI；明列總控、報到、接待、催場、舞台、音控、影像、後勤、攝錄影及客戶決策窗口。',affectedMilestones:'執行手冊、聯絡表與應變方案定稿'},
+  {milestoneName:'邀請、報名與特殊需求名單確認',weeksBefore:4,isCritical:false,defaultRole:'Staff',description:'確認邀請與提醒節點；名單包含單位職稱、飲食、無障礙、交通、住宿、接駁與個資同意狀態，建立每日更新責任人。',affectedMilestones:'報到名單、識別證與座位配置定稿'},
+  {milestoneName:'場勘與場配技術圖定稿',weeksBefore:4,isCritical:true,defaultRole:'PM',description:'現場量測並定稿平面配置、人流與逃生動線、舞台、報到、控台、電力、網路、燈光、音響、吊掛、倉儲與雨備；留存照片和尺寸。',affectedMilestones:'進場安裝、全系統測試與彩排'},
+  {milestoneName:'設計完稿、校對與送印',weeksBefore:2,isCritical:true,defaultRole:'Staff',description:'逐字校對人名職稱、日期時間、Logo、議程、QR Code 與尺寸出血；取得客戶最終版書面確認後才送印，記錄交貨時間。',affectedMilestones:'物資、文件與檔案盤點封箱'},
+  {milestoneName:'執行手冊、聯絡表與應變方案定稿',weeksBefore:1.5,isCritical:true,defaultRole:'PM',description:'完成執行手冊、布場表、全員聯絡表、對講機表、緊急通報、醫護消防、停電斷網、設備故障、天候與人員缺席備案。',affectedMilestones:'進場安裝、全系統測試與彩排'},
+  {milestoneName:'報到名單、識別證與座位配置定稿',weeksBefore:1,isCritical:false,defaultRole:'Staff',description:'凍結名單並完成識別證、桌牌、座位圖、餐券與現場新增名單流程；敏感名單限必要人員存取。',affectedMilestones:'物資、文件與檔案盤點封箱'},
+  {milestoneName:'物資、文件與檔案盤點封箱',weeksBefore:0.5,isCritical:true,defaultRole:'Staff',description:'依清單逐件勾稽數量；備妥流程表、簡報、影片、字型、音樂、轉接頭、延長線、文具、醫藥箱、備用電池及離線備份。',affectedMilestones:'進場安裝、全系統測試與彩排'},
+  {milestoneName:'進場安裝、全系統測試與彩排',weeksBefore:0.15,isCritical:true,defaultRole:'PM',description:'依燈光→舞台→影像→音響→物料順序進場；驗收尺寸、平整、安全走線、收音、畫面、網路、備援電源，完成技術與全流程彩排並關閉缺失。',affectedMilestones:'活動日開場前分站查核'},
+  {milestoneName:'活動日開場前分站查核',weeksBefore:0,isCritical:true,defaultRole:'PM',description:'開場前逐站簽核人員到位、流程版本、簡報影音、麥克風電量、道具順序、貴賓動線、報到、餐飲、消防出口與緊急聯絡。',affectedMilestones:''},
+  {milestoneName:'撤場、回收與現場結算',weeksBefore:-0.15,isCritical:false,defaultRole:'Staff',description:'依清單回收對講機、電腦、工作證、照片與可再用物資；辦理撤場、押金、收據及垃圾清運，確認場地復原後離場。',affectedMilestones:'成果交付、費用核銷與檢討結案'},
+  {milestoneName:'成果交付、費用核銷與檢討結案',weeksBefore:-1,isCritical:false,defaultRole:'PM',description:'交付照片影音、出席統計、媒體監測或問卷成果；完成供應商請款、費用差異、客戶驗收、缺失與可複用資產歸檔。',affectedMilestones:''}
+];
+const ATTACHMENT_TYPE_TEMPLATES={
+  '研討會／論壇':[
+    {milestoneName:'議程架構、主題與講者名單確認',weeksBefore:10,isCritical:true,defaultRole:'PM',description:'確認場次、座長、講者、與談人、語言、每段時間與決策人；標示尚待確認項目及最晚鎖定日。'},
+    {milestoneName:'講者邀約、資料與授權收齊',weeksBefore:6,isCritical:true,defaultRole:'PM',description:'收齊講題、摘要、CV、照片、簡報期限、交通住宿、錄影直播及簡報公開授權；建立逐人追蹤表。'},
+    {milestoneName:'口譯、論文海報與會議技術規格確認',weeksBefore:4,isCritical:false,defaultRole:'PM',description:'依需求確認口譯間與接收器、海報板尺寸及編號、簡報比例、計時提示、返送畫面、錄影與備份規格。'},
+    {milestoneName:'講者簡報收件、相容測試與總控版完成',weeksBefore:0.5,isCritical:true,defaultRole:'Staff',description:'收齊所有簡報並檢查字型、影音、比例、頁序與授權；合併總控版與離線備份，保留最後更新窗口。'}
+  ],
+  '一般會議／審查會':[
+    {milestoneName:'會議目的、議題與決策事項確認',weeksBefore:4,isCritical:true,defaultRole:'PM',description:'明列會議需通過、決議或審查的事項，確認主持人、報告人、委員、表決方式與會後紀錄格式。'},
+    {milestoneName:'會議資料、簡報與審查文件送達',weeksBefore:1,isCritical:true,defaultRole:'Staff',description:'依期限完成版本控管、頁碼與附件校對，確認與會者成功收件；敏感文件設定權限並準備紙本備份。'},
+    {milestoneName:'會議紀錄、決議與追蹤責任發布',weeksBefore:-0.3,isCritical:false,defaultRole:'PM',description:'會後彙整出席、決議、不同意見、責任人與完成期限，交主持人確認後發送並納入追蹤。'}
+  ],
+  '教育訓練／工作坊':[
+    {milestoneName:'學習目標、課綱與評量方式定稿',weeksBefore:8,isCritical:true,defaultRole:'PM',description:'把需求轉成可衡量學習目標，確認課程單元、講師、實作、課前測驗、課後評量與通過標準。'},
+    {milestoneName:'教材、講義與實作環境完成',weeksBefore:2,isCritical:true,defaultRole:'Staff',description:'完成教材校對、授權、印製或下載；測試帳號、軟體、網路、設備及學員分組，準備無法連線的替代方案。'},
+    {milestoneName:'學員通知、分組與課前需求確認',weeksBefore:1,isCritical:false,defaultRole:'Staff',description:'寄送時間地點、攜帶物品、交通、帳號與課前作業；確認飲食、無障礙、住宿、設備及缺席替補。'},
+    {milestoneName:'測驗、滿意度、證書與成果彙整',weeksBefore:-0.5,isCritical:false,defaultRole:'PM',description:'完成出席、前後測、滿意度、作品或作業、證書及照片彙整，對未達標項目提出改善。'}
+  ],
+  '記者會／媒體活動':[
+    {milestoneName:'媒體策略、主訊息與發言口徑定稿',weeksBefore:6,isCritical:true,defaultRole:'PM',description:'確認新聞價值、三個核心訊息、發言人、禁答議題、Q&A、危機口徑及可公開數據，取得客戶書面核准。'},
+    {milestoneName:'新聞稿、媒體名單與採訪通知完成',weeksBefore:2,isCritical:true,defaultRole:'PM',description:'完成新聞稿、照片圖說、背景資料與媒體分級名單；寄發採訪通知並記錄回覆、器材與專訪需求。'},
+    {milestoneName:'發言人演練與媒體動線確認',weeksBefore:0.5,isCritical:true,defaultRole:'PM',description:'完成發言、提問、敏感題與追問演練；確認媒體報到、攝影區、收音、多路訊號、聯訪與一對一專訪動線。'},
+    {milestoneName:'新聞素材發送與媒體監測報告',weeksBefore:-1,isCritical:false,defaultRole:'Staff',description:'會後即時提供正確稿件、照片、影音與聯絡窗口；彙整露出數、調性、重點媒體、錯誤更正及後續追蹤。'}
+  ],
+  '典禮／頒獎／揭牌':[
+    {milestoneName:'儀式腳本、上台名單與站位定稿',weeksBefore:4,isCritical:true,defaultRole:'PM',description:'逐段確認致詞、頒獎、揭牌、剪綵或啟動流程；列出上台順序、站位、引導路線、合照及備援人選。'},
+    {milestoneName:'獎座、證書、揭牌與儀式道具驗收',weeksBefore:1,isCritical:true,defaultRole:'Staff',description:'逐件核對姓名、職稱、順序與外觀；依上台順序裝箱編號，完成啟動裝置及備品測試。'},
+    {milestoneName:'主持、禮賓、催場與技術聯合彩排',weeksBefore:0.15,isCritical:true,defaultRole:'PM',description:'完整演練上台、遞獎、揭牌、燈光音樂、畫面、合照與退場；確認臨時缺席、順序異動與道具故障處理。'}
+  ],
+  '展覽／攤位／園遊會':[
+    {milestoneName:'展區配置、攤位規格與參展手冊確認',weeksBefore:8,isCritical:true,defaultRole:'PM',description:'確認攤位尺寸、限高、電力、網路、消防、施工證、貨梯、倉儲、進撤場與主辦規章，完成配置圖。'},
+    {milestoneName:'展品、互動內容與現場話術定稿',weeksBefore:4,isCritical:false,defaultRole:'PM',description:'確認展品清單、操作方式、展示權限、互動機制、排隊容量、工作人員話術及兒童或無障礙需求。'},
+    {milestoneName:'搭建安全、展品與電力驗收',weeksBefore:0.15,isCritical:true,defaultRole:'PM',description:'驗收結構穩固、配重、防焰、走線、用電、展品固定、網路與消防通道；缺失修正後才簽收。'},
+    {milestoneName:'庫存補給、輪班與撤展清點',weeksBefore:0,isCritical:false,defaultRole:'Staff',description:'建立贈品、文宣、耗材補給點及輪班表；每日盤點，撤展依編號回收展品、器材與可再用物料。'}
+  ],
+  '巡迴宣導／說明會':[
+    {milestoneName:'各場次場地、窗口與在地限制確認',weeksBefore:8,isCritical:true,defaultRole:'PM',description:'逐場確認地址、聯絡人、容量、交通、停車、卸貨、電力、網路、場地設備、行政申請及地方特殊需求。'},
+    {milestoneName:'標準化教材與各場客製內容定稿',weeksBefore:3,isCritical:true,defaultRole:'PM',description:'建立共用母版並標示各場日期、地名、案例、長官與合作單位差異；完成逐場版本表，避免錯場。'},
+    {milestoneName:'巡迴物資箱、運輸與補給排程完成',weeksBefore:1,isCritical:true,defaultRole:'Staff',description:'依場次建立物資箱編號、運送人、到貨時間、回收及耗材補充；重要檔案與設備各有一套備援。'},
+    {milestoneName:'逐場紀錄、缺失修正與下一場更新',weeksBefore:-0.15,isCritical:false,defaultRole:'PM',description:'每場結束記錄出席、照片、問題、遺失損壞與改善事項；下一場出發前確認已完成修正。'}
+  ],
+  '線上會議／直播講座':[
+    {milestoneName:'平台、權限、容量與備援方案確認',weeksBefore:4,isCritical:true,defaultRole:'PM',description:'確認主辦帳號、授權容量、主持權限、錄影、直播延遲、聊天室、同傳、資安與個資設定；準備備援會議室及電話。'},
+    {milestoneName:'講者連線、簡報與影音技術測試',weeksBefore:1,isCritical:true,defaultRole:'Staff',description:'逐位測試網路、鏡頭、收音、燈光、共享、影片聲音、姓名職稱與背景；記錄設備和備援聯絡方式。'},
+    {milestoneName:'會議連結、密碼與參與說明寄送',weeksBefore:0.5,isCritical:false,defaultRole:'Staff',description:'分眾寄送正確連結、密碼、時區、上線時間、顯示名稱及客服窗口；避免在公開頁面暴露管理連結。'},
+    {milestoneName:'直播總彩排、錄影與訊號備援測試',weeksBefore:0.15,isCritical:true,defaultRole:'PM',description:'以正式流程測試主持、講者、畫面、字幕、音源、轉場、錄影、備援網路與備機；確認中斷時切換口令。'}
+  ],
+  '跨區多梯次活動':[
+    {milestoneName:'全場次主檔、差異表與版控規則建立',weeksBefore:10,isCritical:true,defaultRole:'PM',description:'建立場次、日期、地點、窗口、版本、講者、物資及限制主檔；共用內容只維護母版，各場差異需有核准人。'},
+    {milestoneName:'交通、住宿、接駁與人力輪值完成',weeksBefore:4,isCritical:true,defaultRole:'Staff',description:'完成逐人逐場交通住宿、接駁、輪值、工時與替補表；確認離島、天候、行李與設備運送限制。'},
+    {milestoneName:'各站物資、檔案與到貨簽收完成',weeksBefore:1,isCritical:true,defaultRole:'Staff',description:'依場次分箱、貼標與留存裝箱照；追蹤物流簽收，重要設備與檔案不得與人員同一單點運送。'},
+    {milestoneName:'每梯次復盤與後續場次修正',weeksBefore:-0.15,isCritical:false,defaultRole:'PM',description:'每梯結束立即更新流程、教材、物資、人力與風險清單，明列修正人及下一場完成期限。'}
+  ],
+  '體驗／互動活動':[
+    {milestoneName:'體驗流程、容量與排隊機制定稿',weeksBefore:6,isCritical:true,defaultRole:'PM',description:'確認每輪時間、人數、適齡、預約與現場候補、排隊長度、轉場清潔及尖峰疏導方式。'},
+    {milestoneName:'互動設備、耗材與安全風險測試',weeksBefore:2,isCritical:true,defaultRole:'PM',description:'完成壓力測試、耗材估算、消毒、跌落夾傷、過敏、兒童及戶外天候評估；準備停止營運條件與替代體驗。'},
+    {milestoneName:'引導話術、操作教學與人員演練',weeksBefore:0.5,isCritical:false,defaultRole:'Staff',description:'工作人員能在限定時間內完成說明、示範、風險提醒與問題處理；以一般民眾實測理解度和動線。'}
+  ]
+};
+const ATTACHMENT_CATEGORY_BY_NAME={
+  '需求、目標與驗收條件定稿':'專案統籌',
+  '報價、預算與採購時程確認':'後勤作業',
+  '場地檔期、合約與進撤場確認':'現場佈置',
+  '主視覺與製作物清單定稿':'週邊製作',
+  '供應商規格、報價與交期鎖定':'後勤作業',
+  '流程表、工作分組與責任人確認':'專案統籌',
+  '邀請、報名與特殊需求名單確認':'賓客接待',
+  '場勘與場配技術圖定稿':'現場佈置',
+  '設計完稿、校對與送印':'週邊製作',
+  '執行手冊、聯絡表與應變方案定稿':'專案統籌',
+  '報到名單、識別證與座位配置定稿':'賓客接待',
+  '物資、文件與檔案盤點封箱':'後勤作業',
+  '進場安裝、全系統測試與彩排':'燈光音響',
+  '活動日開場前分站查核':'專案統籌',
+  '撤場、回收與現場結算':'後勤作業',
+  '成果交付、費用核銷與檢討結案':'結案成果',
+  '議程架構、主題與講者名單確認':'講師溝通',
+  '講者邀約、資料與授權收齊':'講師溝通',
+  '口譯、論文海報與會議技術規格確認':'專業人員',
+  '講者簡報收件、相容測試與總控版完成':'影音製作',
+  '會議目的、議題與決策事項確認':'專案統籌',
+  '會議資料、簡報與審查文件送達':'專案統籌',
+  '會議紀錄、決議與追蹤責任發布':'結案成果',
+  '學習目標、課綱與評量方式定稿':'專案統籌',
+  '教材、講義與實作環境完成':'週邊製作',
+  '學員通知、分組與課前需求確認':'賓客接待',
+  '測驗、滿意度、證書與成果彙整':'結案成果',
+  '媒體策略、主訊息與發言口徑定稿':'媒體露出',
+  '新聞稿、媒體名單與採訪通知完成':'媒體露出',
+  '發言人演練與媒體動線確認':'媒體露出',
+  '新聞素材發送與媒體監測報告':'媒體露出',
+  '儀式腳本、上台名單與站位定稿':'專案統籌',
+  '獎座、證書、揭牌與儀式道具驗收':'週邊製作',
+  '主持、禮賓、催場與技術聯合彩排':'專業人員',
+  '展區配置、攤位規格與參展手冊確認':'攤位聯絡',
+  '展品、互動內容與現場話術定稿':'攤位聯絡',
+  '搭建安全、展品與電力驗收':'現場佈置',
+  '庫存補給、輪班與撤展清點':'後勤作業',
+  '各場次場地、窗口與在地限制確認':'現場佈置',
+  '標準化教材與各場客製內容定稿':'週邊製作',
+  '巡迴物資箱、運輸與補給排程完成':'後勤作業',
+  '逐場紀錄、缺失修正與下一場更新':'結案成果',
+  '平台、權限、容量與備援方案確認':'直播作業',
+  '講者連線、簡報與影音技術測試':'直播作業',
+  '會議連結、密碼與參與說明寄送':'直播作業',
+  '直播總彩排、錄影與訊號備援測試':'直播作業',
+  '全場次主檔、差異表與版控規則建立':'專案統籌',
+  '交通、住宿、接駁與人力輪值完成':'後勤作業',
+  '各站物資、檔案與到貨簽收完成':'後勤作業',
+  '每梯次復盤與後續場次修正':'結案成果',
+  '體驗流程、容量與排隊機制定稿':'專案統籌',
+  '互動設備、耗材與安全風險測試':'後勤作業',
+  '引導話術、操作教學與人員演練':'專業人員'
+};
+const ATTACHMENT_SHORT_NAME_BY_NAME={
+  '需求、目標與驗收條件定稿':'確認需求與驗收標準',
+  '報價、預算與採購時程確認':'核定預算與採購時程',
+  '場地檔期、合約與進撤場確認':'確認場地與進撤場',
+  '主視覺與製作物清單定稿':'確認主視覺與製作清單',
+  '供應商規格、報價與交期鎖定':'確認供應商與交期',
+  '流程表、工作分組與責任人確認':'確認流程與分工',
+  '邀請、報名與特殊需求名單確認':'確認邀請與報名名單',
+  '場勘與場配技術圖定稿':'完成場勘與場配圖',
+  '設計完稿、校對與送印':'校對完稿並送印',
+  '執行手冊、聯絡表與應變方案定稿':'完成執行與應變手冊',
+  '報到名單、識別證與座位配置定稿':'確認報到與座位名單',
+  '物資、文件與檔案盤點封箱':'盤點物資與檔案',
+  '進場安裝、全系統測試與彩排':'完成進場測試與彩排',
+  '活動日開場前分站查核':'完成開場前查核',
+  '撤場、回收與現場結算':'完成撤場與結算',
+  '成果交付、費用核銷與檢討結案':'交付成果並結案',
+  '議程架構、主題與講者名單確認':'確認議程與講者',
+  '講者邀約、資料與授權收齊':'收齊講者資料與授權',
+  '口譯、論文海報與會議技術規格確認':'確認口譯與海報規格',
+  '講者簡報收件、相容測試與總控版完成':'完成簡報測試與總控版',
+  '會議目的、議題與決策事項確認':'確認議題與決策事項',
+  '會議資料、簡報與審查文件送達':'送達會議與審查資料',
+  '會議紀錄、決議與追蹤責任發布':'發布決議與追蹤事項',
+  '學習目標、課綱與評量方式定稿':'確認課綱與評量方式',
+  '教材、講義與實作環境完成':'完成教材與實作環境',
+  '學員通知、分組與課前需求確認':'確認學員與課前需求',
+  '測驗、滿意度、證書與成果彙整':'彙整評量與課程成果',
+  '媒體策略、主訊息與發言口徑定稿':'確認媒體訊息與口徑',
+  '新聞稿、媒體名單與採訪通知完成':'發送新聞稿與採訪通知',
+  '發言人演練與媒體動線確認':'完成發言與媒體演練',
+  '新聞素材發送與媒體監測報告':'交付素材與媒體監測',
+  '儀式腳本、上台名單與站位定稿':'確認儀式腳本與站位',
+  '獎座、證書、揭牌與儀式道具驗收':'驗收獎座與儀式道具',
+  '主持、禮賓、催場與技術聯合彩排':'完成典禮聯合彩排',
+  '展區配置、攤位規格與參展手冊確認':'確認展區與攤位規格',
+  '展品、互動內容與現場話術定稿':'確認展品與互動內容',
+  '搭建安全、展品與電力驗收':'驗收搭建與用電安全',
+  '庫存補給、輪班與撤展清點':'安排補給與撤展清點',
+  '各場次場地、窗口與在地限制確認':'確認各場場地與窗口',
+  '標準化教材與各場客製內容定稿':'完成各場教材版本',
+  '巡迴物資箱、運輸與補給排程完成':'安排巡迴物資與運輸',
+  '逐場紀錄、缺失修正與下一場更新':'完成場次紀錄與修正',
+  '平台、權限、容量與備援方案確認':'確認平台與備援方案',
+  '講者連線、簡報與影音技術測試':'完成講者連線測試',
+  '會議連結、密碼與參與說明寄送':'寄送連結與參與說明',
+  '直播總彩排、錄影與訊號備援測試':'完成直播與備援測試',
+  '全場次主檔、差異表與版控規則建立':'建立場次主檔與版控',
+  '交通、住宿、接駁與人力輪值完成':'安排交通住宿與輪值',
+  '各站物資、檔案與到貨簽收完成':'完成各站到貨簽收',
+  '每梯次復盤與後續場次修正':'完成梯次復盤與修正',
+  '體驗流程、容量與排隊機制定稿':'確認體驗流程與容量',
+  '互動設備、耗材與安全風險測試':'測試設備與安全風險',
+  '引導話術、操作教學與人員演練':'完成人員操作演練'
+};
+const ATTACHMENT_TYPE_KEY={
+  '研討會／論壇':'F','一般會議／審查會':'M','教育訓練／工作坊':'T','記者會／媒體活動':'P',
+  '典禮／頒獎／揭牌':'C','展覽／攤位／園遊會':'E','巡迴宣導／說明會':'R',
+  '線上會議／直播講座':'O','跨區多梯次活動':'X','體驗／互動活動':'I'
+};
+const ATTACHMENT_DETAILED_TASKS=[
+  // [適用類型, 事項, 分類, 活動前週數, 角色, 關鍵, 完成標準]
+  ['*','確認活動目的','專案統籌',12,'PM',true,'以一句話寫明活動要解決的問題，取得客戶確認。'],
+  ['*','確認對象與人數','專案統籌',12,'PM',true,'確認參與對象、預估與上限人數，作為場地與物資基準。'],
+  ['*','確認日期與地點','專案統籌',12,'PM',true,'確認日期、時段、地址及雨備或延期原則。'],
+  ['*','確認預算上限','後勤作業',12,'PM',true,'確認含稅預算、可調整範圍與不可刪減項目。'],
+  ['*','確認驗收條件','專案統籌',12,'PM',true,'列出人數、交付物、媒體量或成果報告等驗收證明。'],
+  ['*','建立窗口清單','專案統籌',12,'PM',false,'記錄客戶決策、執行、財務與現場窗口及聯絡方式。'],
+  ['*','完成分項報價','後勤作業',10,'PM',true,'依場地、人力、設備、製作、餐飲與稅金完成分項報價。'],
+  ['*','確認委託方式','後勤作業',10,'PM',true,'確認投標、議價或直接簽約及核決流程。'],
+  ['*','完成合約簽署','後勤作業',9,'PM',true,'確認雙方權責、付款、取消延期、版權與驗收條款。'],
+  ['*','建立進度會議','專案統籌',9,'PM',false,'排定會議週期、固定與會者、紀錄人與待辦追蹤方式。'],
+  ['*','確認場地容量','現場佈置',10,'PM',true,'依活動型態核對可用面積、座位數、舞台與排隊容量。'],
+  ['*','取得場地平面圖','現場佈置',9,'Staff',true,'取得標尺寸平面圖、消防圖、貨梯與卸貨動線。'],
+  ['*','確認布撤場時段','現場佈置',8,'PM',true,'確認進場、施工、彩排、撤場及逾時費用。'],
+  ['*','確認電力容量','燈光音響',6,'PM',true,'確認電箱位置、電壓、可用安培、大電與發電機需求。'],
+  ['*','確認網路規格','直播作業',6,'PM',true,'實測有線與無線網路，確認同時連線數及備援。'],
+  ['*','確認卸貨停車','後勤作業',6,'Staff',false,'確認車輛限高、卸貨點、貨梯、停車位及進場證件。'],
+  ['*','確認逃生消防','後勤作業',4,'PM',true,'確認逃生門、滅火器、AED、消防申請與通道淨空。'],
+  ['*','確認無障礙動線','賓客接待',4,'Staff',false,'確認坡道、電梯、廁所、座位及服務窗口。'],
+  ['*','確認活動保險','後勤作業',4,'PM',true,'依合約確認公共意外、雇主、食安或旅行平安險。'],
+  ['*','設計主視覺','週邊製作',8,'PM',true,'完成符合活動目的、品牌規範與各尺寸延伸的主視覺。'],
+  ['*','確認主視覺','週邊製作',7,'PM',true,'取得客戶最終版書面確認，鎖定版本。'],
+  ['*','建立製作清單','週邊製作',7,'Staff',false,'列出品項、尺寸、材質、數量、完稿及到貨日期。'],
+  ['*','校對文字標誌','週邊製作',2,'Staff',true,'逐項確認日期、人名職稱、Logo、QR Code、箭頭與版次。'],
+  ['*','確認輸出材質','週邊製作',2,'Staff',false,'確認霧面、防焰、防滑、耐候與固定方式。'],
+  ['*','確認送印交期','週邊製作',2,'Staff',true,'確認印前檔、打樣、送貨地點與最晚補印時間。'],
+  ['*','安排攝影人員','影音製作',4,'PM',false,'確認人數、拍攝清單、交檔時間、圖傳與使用授權。'],
+  ['*','安排錄影人員','影音製作',4,'PM',false,'確認機位、收音、解析度、交檔格式及備份。'],
+  ['*','確認餐點數量','餐點安排',2,'Staff',false,'依出席、工作人員與備用比例確認各時段份數。'],
+  ['*','調查飲食需求','餐點安排',2,'Staff',false,'彙整葷素、過敏、宗教及特殊餐需求。'],
+  ['*','確認餐點送達','餐點安排',0.5,'Staff',true,'確認廠商窗口、到貨位置、時間、保溫與垃圾清運。'],
+  ['*','招募工作人員','專業人員',3,'PM',false,'依分站與輪班需求確認人數、工時及替補。'],
+  ['*','完成人員訓練','專業人員',0.5,'PM',true,'逐站說明流程、話術、服裝、通訊與異常回報。'],
+  ['*','建立全員通訊錄','專案統籌',1,'Staff',true,'包含客戶、場地、廠商、工作人員及緊急窗口。'],
+  ['*','建立物資清單','後勤作業',1,'Staff',true,'記錄品項、數量、負責人、箱號、去向與回收方式。'],
+  ['*','申請現場款項','後勤作業',1,'PM',false,'依付款清單申請現金或匯款，備妥領據。'],
+  ['*','確認廠商到場','後勤作業',0.5,'Staff',true,'逐一確認負責人、電話、車號、到場與施工時間。'],
+  ['*','清點布置物','現場佈置',0.15,'Staff',true,'依清單核對品項、數量、尺寸、文字與外觀。'],
+  ['*','拍攝布場驗收照','現場佈置',0.15,'Staff',false,'拍攝全景、各站、走線與修正前後照片。'],
+  ['*','測試麥克風','燈光音響',0.15,'Staff',true,'逐支測試收音、嘯叫、頻率、電量與備用電池。'],
+  ['*','測試投影畫面','影音製作',0.15,'Staff',true,'測試比例、解析度、字型、影片聲音與備機切換。'],
+  ['*','測試現場網路','直播作業',0.15,'Staff',true,'實測速度、穩定性、登入方式及備援熱點。'],
+  ['*','完成流程彩排','專案統籌',0.15,'PM',true,'依正式流程完成技術、台上人員與全員聯合彩排。'],
+  ['*','確認撤場流程','後勤作業',0.15,'PM',false,'確認撤場順序、車輛、回收、垃圾與場地點交。'],
+  ['*','完成場地復原','後勤作業',-0.15,'Staff',true,'確認設備移除、垃圾清運、地面牆面及鑰匙點交。'],
+  ['*','回收設備物資','後勤作業',-0.15,'Staff',false,'依借用表回收對講機、電腦、工作證與可再用物資。'],
+  ['*','完成費用統計','後勤作業',-0.5,'PM',false,'彙整實支、追加、發票、領據及預算差異。'],
+  ['*','完成客戶驗收','結案成果',-1,'PM',true,'依合約提交證明並取得驗收或待改善紀錄。'],
+  ['*','整理照片影片','結案成果',-1,'Staff',false,'依日期與場次命名、篩選、備份並提供客戶。'],
+  ['*','完成檢討紀錄','結案成果',-1,'PM',false,'記錄問題、原因、改善方式與可沿用資產。'],
+
+  ['FMTO','確認議程架構','專案統籌',8,'PM',true,'確認場次、主題、時間、休息與問答配置。'],
+  ['FMTO','確認主持座長','講師溝通',8,'PM',true,'確認主持人或座長名單、角色與聯絡方式。'],
+  ['FTO','確認講者名單','講師溝通',10,'PM',true,'確認正選、備選、邀請順序與回覆期限。'],
+  ['FTO','發送講者邀請','講師溝通',9,'PM',true,'寄送正式邀請並追蹤接受、婉拒或待確認。'],
+  ['FTO','收齊講者資料','講師溝通',6,'Staff',false,'收齊姓名職稱、CV、照片、摘要與聯絡方式。'],
+  ['FTO','確認講題摘要','講師溝通',5,'PM',false,'確認中英文講題、摘要、議程用字與公開範圍。'],
+  ['FTO','收齊講者簡報','講師溝通',1,'Staff',true,'追蹤收件、版本、比例、字型與影音檔。'],
+  ['FTO','簽署錄影授權','講師溝通',2,'Staff',false,'確認錄影、直播、剪輯及公開使用範圍。'],
+  ['FTO','安排講者住宿','後勤作業',4,'Staff',false,'確認房型、入住、退房、付款及特殊需求。'],
+  ['FTO','安排講者交通','後勤作業',4,'Staff',false,'確認班次、接送、司機、集合點與緊急聯絡。'],
+  ['FTO','寄送講者行前通知','講師溝通',0.5,'Staff',true,'寄送流程、地址、報到、測試及窗口資訊。'],
+  ['FTO','安排講者測試','講師溝通',0.5,'Staff',true,'確認簡報、收音、畫面、計時與上退場。'],
+  ['F','確認與談人名單','講師溝通',8,'PM',false,'確認與談人、題綱、座次及互動方式。'],
+  ['F','安排口譯人員','專業人員',6,'PM',false,'確認語言、人數、時數、簡報提供與錄音授權。'],
+  ['F','測試口譯設備','燈光音響',0.15,'Staff',true,'測試發射器、頻道、涵蓋範圍、耳機與回收。'],
+  ['F','確認海報規格','週邊製作',8,'PM',false,'確認尺寸、直橫式、編號、分區與提交方式。'],
+  ['F','建立海報編號','週邊製作',2,'Staff',false,'使展板、論文清單及議程手冊編號一致。'],
+  ['F','準備海報工具','後勤作業',0.5,'Staff',false,'備妥圖釘、黏土、膠帶、編號貼與撤除說明。'],
+  ['F','確認贊助攤位','攤位聯絡',6,'PM',false,'確認攤位規格、電力、網路、進撤場與視覺規範。'],
+
+  ['FMTPC','確認貴賓名單','賓客接待',6,'PM',true,'確認邀請、出席、職稱、排序與幕僚窗口。'],
+  ['FMTPC','寄送貴賓邀請','賓客接待',5,'Staff',false,'寄送邀請並追蹤出席及特殊需求。'],
+  ['FMTPC','確認貴賓交通','賓客接待',2,'Staff',false,'確認車號、司機、抵達時間、車位及引導人。'],
+  ['FMTPC','確認貴賓座位','賓客接待',1,'PM',true,'完成座位圖、桌卡、引導路線及臨時異動方式。'],
+  ['FMTPC','撰寫長官致詞稿','專案統籌',2,'PM',false,'確認字數、口徑、數據、人名職稱與核稿版本。'],
+  ['*','確認報到方式','賓客接待',4,'PM',true,'選定人工、電子或混合報到及異常處理。'],
+  ['*','建立報名名單','賓客接待',3,'Staff',true,'統一欄位、編號、個資權限與更新責任人。'],
+  ['*','製作識別證','週邊製作',1,'Staff',false,'完成名單套版、校對、印製、排序與空白備品。'],
+  ['*','寄送會前提醒','賓客接待',0.5,'Staff',false,'寄送時間、地點、交通、流程及取消方式。'],
+  ['*','準備備用簽到表','賓客接待',0.5,'Staff',false,'依名單排序列印並備妥現場新增欄位。'],
+  ['*','測試報到設備','賓客接待',0.15,'Staff',true,'測試電腦、平板、掃碼、印表機、標籤機與備援。'],
+
+  ['FMTERO','確認網站功能','週邊製作',8,'PM',false,'確認一頁或多頁、報名、繳費、投稿及後台權限。'],
+  ['FMTERO','完成網站開發','週邊製作',6,'Staff',true,'完成版型、內容、隱私告知、表單與通知信。'],
+  ['FMTERO','測試網站報名','週邊製作',4,'Staff',true,'測試手機、桌機、欄位、信件、付款與匯出。'],
+  ['FMTERO','正式上線網站','週邊製作',3,'PM',true,'確認網址、搜尋設定、追蹤碼與客服窗口。'],
+  ['FMTERO','更新網站內容','週邊製作',1,'Staff',false,'依核准版本更新議程、講者、交通與公告。'],
+  ['FMTERO','統計報名人數','賓客接待',1,'Staff',false,'定期回報總數、身份、場次及候補。'],
+  ['FMTERO','匯出最終名單','賓客接待',0.5,'Staff',true,'凍結報到、餐飲、識別證與座位使用名單。'],
+
+  ['PCER','撰寫新聞稿','媒體露出',3,'PM',true,'完成標題、導言、數據、引言、聯絡資訊與核稿。'],
+  ['PCER','建立媒體名單','媒體露出',3,'Staff',false,'依議題與區域分級，確認記者及聯絡方式。'],
+  ['PCER','寄送採訪通知','媒體露出',1,'Staff',true,'寄送時間地點、採訪重點、停車與回覆方式。'],
+  ['PCER','確認出席媒體','媒體露出',0.5,'Staff',false,'彙整媒體、人數、器材、聯訪與專訪需求。'],
+  ['PCER','安排媒體接待','媒體露出',0.5,'PM',false,'確認媒體報到、攝影區、收音、座位及窗口。'],
+  ['PCER','準備新聞資料','媒體露出',0.5,'Staff',true,'備妥新聞稿、照片、圖說、背景資料與下載連結。'],
+  ['PCER','發送會後素材','媒體露出',-0.15,'Staff',false,'會後即時提供核准稿件、照片與影音。'],
+  ['PCER','完成媒體監測','媒體露出',-1,'Staff',false,'彙整露出、連結、調性、錯誤更正與成效。'],
+
+  ['C','確認司儀人選','專業人員',6,'PM',true,'確認風格、語言、檔期、費用及聯絡方式。'],
+  ['C','完成司儀稿','專案統籌',1,'PM',true,'完成流程、稱謂、轉場、口令、備案與核稿。'],
+  ['C','確認儀式道具','週邊製作',2,'Staff',true,'確認獎座、證書、揭牌、剪綵、啟動與備品。'],
+  ['C','編排上台順序','賓客接待',1,'PM',true,'確認引導、站位、遞交、合照與退場。'],
+  ['C','安排禮賓人員','專業人員',2,'PM',false,'確認人數、服裝、站位、手勢、輪班與帶隊。'],
+  ['C','完成儀式彩排','專案統籌',0.15,'PM',true,'完整演練口令、音樂、畫面、道具與人員動線。'],
+
+  ['EI','確認攤位配置','攤位聯絡',6,'PM',true,'確認數量、尺寸、走道、消防與參展單位位置。'],
+  ['EI','發送參展手冊','攤位聯絡',4,'Staff',false,'說明視覺、用電、施工、進撤場及禁止事項。'],
+  ['EI','確認攤位用電','攤位聯絡',2,'Staff',true,'逐攤確認瓦數、插座、獨立電源與加價。'],
+  ['EI','確認展品清單','攤位聯絡',2,'Staff',false,'記錄展品、數量、價值、操作、保管與回收。'],
+  ['EI','安排耗材補給','後勤作業',0.5,'Staff',false,'設定庫存量、補給點、補充頻率與負責人。'],
+  ['EI','驗收攤位搭建','現場佈置',0.15,'PM',true,'檢查結構、配重、防焰、走線、視覺與通道。'],
+
+  ['O','確認視訊平台','直播作業',4,'PM',true,'確認容量、權限、錄影、聊天室、資安與費用。'],
+  ['O','建立會議連結','直播作業',2,'Staff',true,'建立正式與備援會議室，妥善管理主持連結。'],
+  ['O','測試講者連線','直播作業',1,'Staff',true,'逐位測試網路、鏡頭、收音、共享與影片聲音。'],
+  ['O','測試與會者流程','直播作業',1,'Staff',false,'測試登入、改名、靜音、提問、投票與客服。'],
+  ['O','寄送連結密碼','直播作業',0.5,'Staff',true,'分眾寄送正確連結、密碼、時區與上線時間。'],
+  ['O','確認錄影設定','直播作業',0.15,'Staff',true,'確認錄影位置、容量、聲軌、權限與備份。'],
+  ['O','監控直播訊號','直播作業',0,'Staff',true,'監看畫面、聲音、延遲、在線人數與備援切換。'],
+
+  ['F','規劃展覽與贊助區','攤位聯絡',8,'PM',false,'確認是否設置展覽或贊助區，完成攤位數量、方案、配置、招商對象與收費原則。'],
+  ['F','完成參展單位管理','攤位聯絡',4,'Staff',false,'完成參展確認、合約、攤位手冊、用電網路、進撤場、證件及現場窗口彙整。'],
+  ['F','完成展覽區驗收','現場佈置',0.15,'PM',false,'依配置圖一次查核攤位、展品、用電、走道、消防、視覺與參展單位簽到。'],
+  ['FM','規劃 City Tour','專案統籌',8,'PM',false,'確認是否辦理城市導覽，完成對象、人數、預算、日期、路線、景點與雨備方案。'],
+  ['FM','完成 City Tour 行前安排','後勤作業',2,'Staff',false,'整合報名名單、交通、導覽、餐飲、門票、保險、無障礙需求與行前通知。'],
+  ['FM','執行 City Tour 與結案','賓客接待',0,'PM',false,'完成集合清點、車次與導覽控場、緊急應變；活動後核對費用、照片及意見回饋。'],
+  ['F','規劃論文海報展示','週邊製作',8,'PM',false,'確認是否辦理論文海報展示，完成投稿規範、尺寸、審查、編號、分區、展示時段及作者說明。'],
+  ['F','完成論文海報展示準備','週邊製作',1,'Staff',false,'完成入選名單、版面位置、標示、作者通知、展示工具、現場值班與未到件處理。'],
+  ['F','完成論文海報布撤展','現場佈置',0.15,'Staff',false,'依編號完成張貼與巡查，活動後辦理撤展、未領取海報保管及現場復原。'],
+
+  ['XR','建立場次主檔','專案統籌',10,'PM',true,'彙整日期、地點、窗口、版本、物資與限制。'],
+  ['XR','建立場次差異表','專案統籌',8,'PM',true,'標示講者、流程、設計、場地與人力差異。'],
+  ['XR','確認各場窗口','專案統籌',6,'Staff',true,'逐場確認主辦、場地、廠商及緊急窗口。'],
+  ['XR','安排跨區交通','後勤作業',4,'Staff',false,'確認人員班次、接駁、車輛、司機與備案。'],
+  ['XR','安排跨區住宿','後勤作業',4,'Staff',false,'確認房型、名單、入住、付款與取消期限。'],
+  ['XR','分裝場次物資','後勤作業',1,'Staff',true,'依場次分箱、貼標、拍照並記錄去向。'],
+  ['XR','追蹤物資到貨','後勤作業',0.5,'Staff',true,'確認物流單號、簽收、損壞與補件。'],
+  ['XR','完成單場復盤','結案成果',-0.15,'PM',false,'每場結束立即更新問題與下一場修正事項。']
+];
+function detailedAttachmentTasksFor(eventType){
+  const key=ATTACHMENT_TYPE_KEY[eventType];
+  return ATTACHMENT_DETAILED_TASKS.filter(item=>item[0]==='*'||item[0].includes(key)).map(item=>({
+    milestoneName:item[1],category:item[2],weeksBefore:item[3],defaultRole:item[4],
+    isCritical:item[5],description:item[6],affectedMilestones:''
+  }));
+}
+function shortAttachmentAffectedNames(value){
+  const aliases={'報價與採購時程確認':'核定預算與採購時程','場地檔期與合約確認':'確認場地與進撤場'};
+  return String(value||'').split(',').map(name=>ATTACHMENT_SHORT_NAME_BY_NAME[name]||aliases[name]||name).filter(Boolean).join(',');
+}
+function attachmentEvidenceFor(item){
+  const name=String(item.milestoneName||'');
+  if(/照片|攝影|錄影|畫面|素材|展品/.test(name))return '照片／影片檔或交付連結';
+  if(/測試|彩排|驗收|查核|確認/.test(name))return '查核表、測試紀錄或核准截圖';
+  if(/寄送|發送|通知|邀請/.test(name))return '寄送紀錄與收件名單';
+  if(/名單|清單|通訊錄|座位|編號|配置|排程|流程|議程/.test(name))return '最新版清單或核准文件';
+  if(/報價|預算|費用|合約|付款|保險/.test(name))return '報價、合約、憑證或核准紀錄';
+  if(/網站|平台|連結|網路|直播/.test(name))return '網址、權限截圖或測試紀錄';
+  if(/場地|場勘|布置|搭建|撤場|復原/.test(name))return '場地文件、點交紀錄或現場照片';
+  return '核准文件、完成截圖或可追溯紀錄';
+}
+function attachmentSopFields(item){
+  const required=Boolean(item.isCritical);
+  return {
+    applicability:required?'必做':'條件式',
+    evidence:attachmentEvidenceFor(item),
+    reviewer:required?'PM／主管':'PM',
+    notApplicableRule:required
+      ?'原則不得略過；確需排除時，須註明原因並取得主管核准'
+      :'不適用時填寫原因，由 PM 確認後關閉'
+  };
+}
+function attachmentPhaseFor(weeksBefore){
+  const weeks=Number(weeksBefore||0);
+  if(weeks>=9)return '立案啟動';
+  if(weeks>=5)return '規劃確認';
+  if(weeks>=2)return '執行籌備';
+  if(weeks>0)return '行前準備';
+  if(weeks===0)return '活動當天';
+  return '結案追蹤';
+}
+const ATTACHMENT_CONSOLIDATION_GROUPS=[
+  {name:'確認活動需求與驗收標準',items:['確認活動目的','確認對象與人數','確認日期與地點','確認預算上限','確認驗收條件','確認需求與驗收標準'],description:'確認目的、對象、人數、日期、地點、預算、交付物與驗收標準，取得客戶書面確認。'},
+  {name:'確認場地與進撤場條件',items:['確認場地容量','取得場地平面圖','確認布撤場時段','確認卸貨停車','確認場地與進撤場'],description:'確認場地容量、平面圖、進撤場、卸貨停車、施工限制與相關費用。'},
+  {name:'完成場地技術與安全確認',items:['確認電力容量','確認網路規格','確認逃生消防','確認無障礙動線'],description:'確認電力、網路、消防逃生及無障礙動線，完成問題與改善紀錄。'},
+  {name:'確認議程與講者',items:['確認講者名單','確認議程與講者'],description:'確認議程架構、講者與座長名單、邀請順序及最晚鎖定日。'},
+  {name:'建立場次主檔與版控',items:['建立場次主檔','建立場次主檔與版控'],description:'彙整各場日期、地點、窗口、版本、講者、物資與限制，統一管理差異。'},
+  {name:'完成主視覺設計與定稿',items:['設計主視覺','確認主視覺'],description:'依活動目的及品牌規範完成主視覺，取得最終版確認。'},
+  {name:'完成製作物規格與送印',items:['建立製作清單','校對文字標誌','確認輸出材質','確認送印交期'],description:'確認品項、尺寸、材質、數量及交期，完成文字校對與送印。'},
+  {name:'完成設備與網路整合測試',items:['測試麥克風','測試投影畫面','測試現場網路'],description:'一次測試音響、投影、影片、網路及備援切換，記錄異常與修正結果。'},
+  {name:'安排攝錄影',items:['安排攝影人員','安排錄影人員'],description:'確認攝錄影人員、機位、拍攝清單、交檔規格、時程與使用授權。'},
+  {name:'確認餐飲數量與特殊需求',items:['確認餐點數量','調查飲食需求'],description:'確認各時段份數，彙整葷素、過敏、宗教及其他特殊需求。'},
+  {name:'完成布場盤點與留存',items:['清點布置物','拍攝布場驗收照'],description:'依清單完成布置物驗收，拍攝全景、各站及修正前後照片。'},
+  {name:'完成撤場復原與物資回收',items:['完成場地復原','回收設備物資'],description:'完成設備拆除、物資回收、垃圾清運及場地點交。'},
+  {name:'完成工作人員招募與訓練',items:['招募工作人員','完成人員訓練'],description:'依分站確認人數與替補，完成流程、話術、服裝、通訊及異常回報訓練。'},
+  {name:'完成線上平台全流程測試',items:['測試講者連線','測試與會者流程','確認錄影設定'],description:'測試講者連線、與會者操作、共享影音、錄影及備援流程。'},
+  {name:'規劃論文海報展示',items:['確認海報規格','建立海報編號','規劃論文海報展示'],description:'確認投稿規範、尺寸、審查、編號、分區、展示時段與作者說明。'},
+  {name:'完成論文海報展示準備',items:['準備海報工具','完成論文海報展示準備'],description:'完成入選名單、位置標示、作者通知、展示工具與未到件處理。'}
+];
+function consolidateAttachmentTasks(items){
+  const groupByItem=new Map();
+  const consolidatedNames=new Set(ATTACHMENT_CONSOLIDATION_GROUPS.map(group=>group.name));
+  ATTACHMENT_CONSOLIDATION_GROUPS.forEach(group=>group.items.forEach(name=>groupByItem.set(name,group)));
+  const combined=new Map();
+  for(const item of items){
+    const group=groupByItem.get(item.milestoneName);
+    const name=group?.name||item.milestoneName;
+    const current=combined.get(name);
+    if(!current){
+      combined.set(name,{...item,milestoneName:name,description:group?.description||item.description});
+      continue;
+    }
+    const descriptions=[current.description,item.description].filter(Boolean);
+    const evidences=[current.evidence,item.evidence].filter(Boolean);
+    combined.set(name,{
+      ...current,
+      weeksBefore:Math.max(Number(current.weeksBefore||0),Number(item.weeksBefore||0)),
+      isCritical:Boolean(current.isCritical||item.isCritical),
+      applicability:(current.isCritical||item.isCritical)?'必做':'條件式',
+      reviewer:(current.isCritical||item.isCritical)?'PM／主管':'PM',
+      notApplicableRule:(current.isCritical||item.isCritical)
+        ?'原則不得略過；確需排除時，須註明原因並取得主管核准'
+        :'不適用時填寫原因，由 PM 確認後關閉',
+      description:group?.description||[...new Set(descriptions)].join('；'),
+      evidence:[...new Set(evidences)].join('、')
+    });
+  }
+  return [...combined.values()].map(item=>({
+    ...item,
+    phase:attachmentPhaseFor(item.weeksBefore),
+    evidence:consolidatedNames.has(item.milestoneName)?attachmentEvidenceFor(item):item.evidence
+  }));
+}
+function attachmentTemplatesFor(eventType){
+  const merged=[...ATTACHMENT_COMMON_TEMPLATES,...detailedAttachmentTasksFor(eventType),...(ATTACHMENT_TYPE_TEMPLATES[eventType]||[])];
+  const normalized=merged.map(item=>{
+      const sourceName=item.milestoneName;
+      return {...item,eventType,milestoneName:ATTACHMENT_SHORT_NAME_BY_NAME[sourceName]||sourceName,
+        category:ATTACHMENT_CATEGORY_BY_NAME[sourceName]||item.category||milestoneCategory(item),
+        phase:attachmentPhaseFor(item.weeksBefore),
+        affectedMilestones:shortAttachmentAffectedNames(item.affectedMilestones),
+        ...attachmentSopFields(item)};
+    });
+  const unique=consolidateAttachmentTasks(normalized);
+  const categoryOrder=new Map(MILESTONE_CATEGORIES.map((name,index)=>[name,index]));
+  return unique
+    .sort((a,b)=>
+      Number(b.weeksBefore||0)-Number(a.weeksBefore||0) ||
+      Number(Boolean(b.isCritical))-Number(Boolean(a.isCritical)) ||
+      (categoryOrder.get(a.category)??999)-(categoryOrder.get(b.category)??999) ||
+      String(a.milestoneName).localeCompare(String(b.milestoneName),'zh-Hant')
+    )
+    .map((item,index)=>({...item,sortOrder:index+1}));
+}
 
 async function loadEventTypesCache(){
   try{
@@ -1526,6 +2031,7 @@ async function loadEventTypeTab(){
         <div style="font-size:13px;color:var(--n500)">可在此新增/停用專案類型；既有 Templates / Projects 可一鍵匯入，不用重 KEY。</div>
         <div class="d-flex gap-2">
           <button class="btn-ic" onclick="importEventTypesFromExisting()" title="從既有資料匯入"><i class="bi bi-download"></i></button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="applyAttachmentTemplateData()"><i class="bi bi-magic me-1"></i>套用附件建議分類與待辦</button>
           <button class="btn-ac" onclick="openEventTypeM()"><i class="bi bi-plus"></i>新增類型</button>
         </div>
       </div>
@@ -1568,6 +2074,83 @@ async function importEventTypesFromExisting(){
     const r = await doPost({action:'seedEventTypesFromTemplates', token:APP.token});
     if(r.success){toast('success', `匯入完成，新增 ${r.imported||0} 筆類型`); document.getElementById('tab-type').dataset.loaded=''; loadEventTypeTab();}
     else toast('danger', r.error);
+  }finally{ld(false);}
+}
+
+async function runTaskPool(tasks,limit=3){
+  let cursor=0;
+  async function worker(){
+    while(cursor<tasks.length){
+      const task=tasks[cursor++];
+      await task();
+    }
+  }
+  await Promise.all(Array.from({length:Math.min(limit,tasks.length)},worker));
+}
+
+async function applyAttachmentTemplateData(){
+  if(APP.user?.role!=='Admin'){toast('warning','僅管理員可套用分類與模版');return;}
+  const total=ATTACHMENT_EVENT_TYPES.reduce((sum,type)=>sum+attachmentTemplatesFor(type.eventTypeName).length,0);
+  if(!confirm(
+    `將依附件重整為 ${ATTACHMENT_EVENT_TYPES.length} 類活動、${total} 個可驗收待辦。\n\n`+
+    '同名待辦會更新，附件未包含的舊模版會刪除；已建立專案的既有節點不受影響。\n'+
+    '是否繼續？'
+  ))return;
+  ld(true);
+  const summary={typesAdded:0,typesUpdated:0,templatesAdded:0,templatesUpdated:0,templatesDeleted:0};
+  try{
+    clearApiCache();
+    const eventTypeResult=await doGet({action:'getEventTypes',token:APP.token});
+    if(!eventTypeResult.success)throw new Error(eventTypeResult.error||'無法讀取活動類型');
+    const currentTypes=eventTypeResult.eventTypes||[];
+    for(const definition of ATTACHMENT_EVENT_TYPES){
+      const existing=currentTypes.find(item=>item.eventTypeName===definition.eventTypeName);
+      const data={...definition,active:true};
+      const result=existing
+        ? await doPost({action:'updateEventType',token:APP.token,eventTypeId:existing.eventTypeId,data},{clearCache:false})
+        : await doPost({action:'addEventType',token:APP.token,data},{clearCache:false});
+      if(!result.success)throw new Error(result.error||`無法更新「${definition.eventTypeName}」`);
+      if(existing)summary.typesUpdated++;else summary.typesAdded++;
+    }
+    for(const definition of ATTACHMENT_EVENT_TYPES){
+      const eventType=definition.eventTypeName;
+      const existingResult=await fetchJson(
+        `${GAS_URL}?${new URLSearchParams({action:'getTemplates',token:APP.token,eventType})}`,
+        {method:'GET',redirect:'follow',cache:'no-store'}
+      );
+      if(!existingResult.success)throw new Error(existingResult.error||`無法讀取「${eventType}」模版`);
+      const existingTemplates=existingResult.templates||[];
+      const targets=attachmentTemplatesFor(eventType);
+      const targetNames=new Set(targets.map(item=>item.milestoneName));
+      const jobs=[];
+      for(const data of targets){
+        const existing=existingTemplates.find(item=>item.milestoneName===data.milestoneName);
+        jobs.push(async()=>{
+          const result=existing
+            ? await doPost({action:'updateTemplate',token:APP.token,templateId:existing.templateId,data},{clearCache:false})
+            : await doPost({action:'addTemplate',token:APP.token,data},{clearCache:false});
+          if(!result.success)throw new Error(result.error||`無法更新「${eventType}／${data.milestoneName}」`);
+          if(existing)summary.templatesUpdated++;else summary.templatesAdded++;
+        });
+      }
+      await runTaskPool(jobs,3);
+      const stale=existingTemplates.filter(item=>!targetNames.has(item.milestoneName));
+      await runTaskPool(stale.map(item=>async()=>{
+        const result=await doPost({action:'deleteTemplate',token:APP.token,templateId:item.templateId},{clearCache:false});
+        if(!result.success)throw new Error(result.error||`無法移除舊模版「${item.milestoneName}」`);
+        summary.templatesDeleted++;
+      }),3);
+    }
+    clearApiCache();
+    EVENT_TYPES=ATTACHMENT_EVENT_TYPES.map(item=>item.eventTypeName);
+    APP._tmplFilter=EVENT_TYPES[0];
+    document.getElementById('tab-type').dataset.loaded='';
+    document.getElementById('tab-tmpl').dataset.loaded='';
+    toast('success',`附件資料已套用：新增 ${summary.templatesAdded}、更新 ${summary.templatesUpdated}、移除舊模版 ${summary.templatesDeleted}`);
+    loadEventTypeTab();
+  }catch(error){
+    clearApiCache();
+    toast('danger','套用中斷：'+error.message);
   }finally{ld(false);}
 }
 
@@ -1634,6 +2217,7 @@ async function loadTmplTab(filterType){
                 <span class="font-mono" style="font-size:12px;color:var(--n500)">${i+1}</span>
                 <span>
                   <div class="fw6" style="color:var(--n900)">${t.milestoneName}</div>
+                  <div style="margin-top:3px"><span class="tool-pill">${esc(t.category||milestoneCategory(t))}</span></div>
                   ${t.description?`<div style="font-size:11px;color:var(--n500);margin-top:2px">${t.description}</div>`:''}
                   ${t.affectedMilestones?`<div style="font-size:10px;color:var(--accent);margin-top:2px">
                     <i class="bi bi-arrow-right me-1"></i>影響：${t.affectedMilestones}
@@ -1696,12 +2280,13 @@ function tmplWeekLabel(wb){
 
 // ── 模版新增/編輯 Modal ───────────────────────────────────────
 async function openTmplM(tid, defaultType, existing){
-  await loadEventTypesToSelect('ft-et', defaultType || APP._tmplFilter || '國際研討會');
+  await loadEventTypesToSelect('ft-et', defaultType || APP._tmplFilter || EVENT_TYPES[0]);
   document.getElementById('tmpl-ttl').textContent = tid ? '編輯模版節點' : '新增模版節點';
   document.getElementById('ft-id').value = tid || '';
   if(existing){
     document.getElementById('ft-n').value    = existing.milestoneName || '';
-    document.getElementById('ft-et').value   = existing.eventType || defaultType || '國際研討會';
+    document.getElementById('ft-et').value   = existing.eventType || defaultType || EVENT_TYPES[0];
+    document.getElementById('ft-cat').value  = existing.category || milestoneCategory(existing);
     document.getElementById('ft-wb').value   = existing.weeksBefore || '';
     document.getElementById('ft-so').value   = existing.sortOrder || '';
     document.getElementById('ft-cr').checked = existing.isCritical === 'TRUE';
@@ -1712,7 +2297,8 @@ async function openTmplM(tid, defaultType, existing){
     document.getElementById('ft-et').disabled = true;
   } else {
     ['ft-n','ft-desc','ft-af'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('ft-et').value   = defaultType || APP._tmplFilter || '國際研討會';
+    document.getElementById('ft-et').value   = defaultType || APP._tmplFilter || EVENT_TYPES[0];
+    document.getElementById('ft-cat').value  = '專案統籌';
     document.getElementById('ft-et').disabled = false;
     document.getElementById('ft-wb').value   = '';
     document.getElementById('ft-so').value   = '';
@@ -1734,6 +2320,7 @@ async function submitTmpl(){
   const data = {
     milestoneName:      name,
     eventType:          et,
+    category:           document.getElementById('ft-cat').value,
     weeksBefore:        Number(wb),
     isCritical:         document.getElementById('ft-cr').checked,
     defaultRole:        document.getElementById('ft-rl').value,
@@ -1989,6 +2576,7 @@ async function openProjM(){
   // 重置為「新增」模式
   document.getElementById('proj-modal-title').innerHTML='<i class="bi bi-plus-circle me-2"></i>新增專案';
   document.getElementById('btn-submit-proj').innerHTML='<i class="bi bi-plus-circle me-1"></i>建立專案並自動產生節點';
+  resetProjectSubmitState();
   document.getElementById('fp-id').value='';
   document.getElementById('fp-t').disabled=false;
   document.getElementById('fp-status-wrap').style.display='none';
@@ -2011,6 +2599,7 @@ async function openEditProj(pid){
     await loadEventTypesToSelect('fp-t', proj.eventType || '');
     document.getElementById('proj-modal-title').innerHTML='<i class="bi bi-pencil me-2"></i>編輯專案';
     document.getElementById('btn-submit-proj').innerHTML='<i class="bi bi-save me-1"></i>儲存變更';
+    resetProjectSubmitState();
     document.getElementById('fp-id').value=pid;
     document.getElementById('fp-n').value=proj.projectName||'';
     document.getElementById('fp-c').value=proj.clientName||'';
@@ -2046,6 +2635,13 @@ async function openEditProj(pid){
 }
 
 async function submitProj(){
+  if(PROJECT_SUBMIT_IN_FLIGHT)return;
+  if(PROJECT_SUBMIT_UNCERTAIN){
+    bootstrap.Modal.getInstance(document.getElementById('m-proj'))?.hide();
+    nav('projects');
+    toast('warning','請先確認專案列表；若沒有新專案，再重新送出');
+    return;
+  }
   const pid=document.getElementById('fp-id').value;
   const isEdit=!!pid;
   const n=document.getElementById('fp-n').value.trim();
@@ -2073,11 +2669,19 @@ async function submitProj(){
     notes:document.getElementById('fp-nt').value
   };
   if(isEdit) data.projectStatus=document.getElementById('fp-st').value;
-  ld(true);
+  const submitBtn=document.getElementById('btn-submit-proj');
+  const submitStatus=document.getElementById('proj-submit-status');
+  const defaultButtonHtml=submitBtn.innerHTML;
+  PROJECT_SUBMIT_IN_FLIGHT=true;
+  submitBtn.disabled=true;
+  submitBtn.setAttribute('aria-busy','true');
+  submitBtn.innerHTML=`<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>${isEdit?'儲存中':'建立中'}，請勿重複送出`;
+  submitStatus.textContent=isEdit?'正在儲存變更…':'正在建立專案與預設節點，可能需要一些時間…';
   try{
+    const requestId=createRequestId();
     const r=isEdit
-      ? await doPost({action:'updateProject',token:APP.token,projectId:pid,data})
-      : await doPost({action:'createProject',token:APP.token,data});
+      ? await doPost({action:'updateProject',token:APP.token,projectId:pid,data,requestId},{timeoutMs:45000})
+      : await doPost({action:'createProject',token:APP.token,data,requestId},{timeoutMs:90000});
     if(r.success){
       bootstrap.Modal.getInstance(document.getElementById('m-proj')).hide();
       document.getElementById('fp-t').disabled=false;
@@ -2102,9 +2706,38 @@ async function submitProj(){
         toast('success','專案建立成功！節點已自動產生');
         nav('proj-detail',r.projectId);
       }
-    } else toast('danger',r.error||'操作失敗');
-  }catch(e){toast('danger','連線失敗：'+e.message);}
-  finally{ld(false);}
+    } else{
+      submitStatus.textContent='伺服器未完成操作，請依提示修正後再試。';
+      toast('danger',r.error||'操作失敗，資料尚未送出');
+    }
+  }catch(e){
+    if(e.code==='TIMEOUT'){
+      PROJECT_SUBMIT_UNCERTAIN=true;
+      submitStatus.textContent='伺服器仍可能已完成建立，請先到專案列表確認，避免重複新增。';
+      submitBtn.innerHTML='<i class="bi bi-list-check me-1"></i>前往專案列表確認';
+      toast('warning','等待伺服器回覆逾時；請先確認專案列表，避免重複送出');
+    }else{
+      submitStatus.textContent='送出失敗，請確認網路後再試。';
+      toast('danger','連線失敗：'+e.message);
+    }
+  }finally{
+    PROJECT_SUBMIT_IN_FLIGHT=false;
+    submitBtn.removeAttribute('aria-busy');
+    submitBtn.disabled=false;
+    if(!PROJECT_SUBMIT_UNCERTAIN)submitBtn.innerHTML=defaultButtonHtml;
+  }
+}
+
+function resetProjectSubmitState(){
+  PROJECT_SUBMIT_IN_FLIGHT=false;PROJECT_SUBMIT_UNCERTAIN=false;
+  const btn=document.getElementById('btn-submit-proj'),status=document.getElementById('proj-submit-status');
+  if(btn){btn.disabled=false;btn.removeAttribute('aria-busy');}
+  if(status)status.textContent='';
+}
+
+function createRequestId(){
+  if(globalThis.crypto&&typeof globalThis.crypto.randomUUID==='function')return crypto.randomUUID();
+  return `proj-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
 async function delProject(pid,pname){
@@ -2134,33 +2767,53 @@ const API_CACHE_TTL={
 };
 const SESSION_API_CACHE_KEY='mcs_api_cache_v2';
 const SESSION_CACHE_ACTIONS=new Set(['getEventTypes','getUsers','getTemplates','getProjects','getProjectDetail','getDashboardData','getResources','getClosedProjects','getWorkload','getProjectStats','getGanttData','getProjectRiskReport']);
+let SESSION_API_CACHE=null,SESSION_CACHE_WRITE_TIMER=0;
 function apiUserScope(){return String(APP.user?.userId||APP.user?.username||APP.user?.displayName||'anonymous');}
 function apiSessionKey(params){
   const clean=Object.keys(params).filter(key=>key!=='token').sort().reduce((out,key)=>(out[key]=params[key],out),{});
   return `${apiUserScope()}|${JSON.stringify(clean)}`;
 }
+function sessionApiCache(){
+  if(SESSION_API_CACHE)return SESSION_API_CACHE;
+  try{SESSION_API_CACHE=JSON.parse(sessionStorage.getItem(SESSION_API_CACHE_KEY)||'{}');}
+  catch{SESSION_API_CACHE={};}
+  return SESSION_API_CACHE;
+}
+function flushSessionApiCache(){
+  if(SESSION_CACHE_WRITE_TIMER){clearTimeout(SESSION_CACHE_WRITE_TIMER);SESSION_CACHE_WRITE_TIMER=0;}
+  try{sessionStorage.setItem(SESSION_API_CACHE_KEY,JSON.stringify(SESSION_API_CACHE||{}));}catch{}
+}
+function scheduleSessionCacheWrite(){
+  if(SESSION_CACHE_WRITE_TIMER)return;
+  const write=()=>{SESSION_CACHE_WRITE_TIMER=0;flushSessionApiCache();};
+  SESSION_CACHE_WRITE_TIMER=setTimeout(write,250);
+}
 function readSessionApiCache(params){
   if(!SESSION_CACHE_ACTIONS.has(params.action))return null;
-  try{
-    const store=JSON.parse(sessionStorage.getItem(SESSION_API_CACHE_KEY)||'{}');
-    const entry=store[apiSessionKey(params)];
-    if(!entry||Date.now()-entry.cachedAt>=apiCacheTtl(params.action))return null;
-    return entry;
-  }catch{return null;}
+  const store=sessionApiCache(),key=apiSessionKey(params),entry=store[key];
+  if(!entry||Date.now()-entry.cachedAt>=apiCacheTtl(params.action)){
+    if(entry){delete store[key];scheduleSessionCacheWrite();}
+    return null;
+  }
+  return entry;
 }
 function writeSessionApiCache(params,data){
   if(!SESSION_CACHE_ACTIONS.has(params.action))return;
-  try{
-    const store=JSON.parse(sessionStorage.getItem(SESSION_API_CACHE_KEY)||'{}');
-    store[apiSessionKey(params)]={data,cachedAt:Date.now()};
-    const entries=Object.entries(store).sort((a,b)=>b[1].cachedAt-a[1].cachedAt).slice(0,30);
-    sessionStorage.setItem(SESSION_API_CACHE_KEY,JSON.stringify(Object.fromEntries(entries)));
-  }catch{}
+  const store=sessionApiCache();
+  store[apiSessionKey(params)]={data,cachedAt:Date.now()};
+  const entries=Object.entries(store);
+  if(entries.length>30){
+    entries.sort((a,b)=>b[1].cachedAt-a[1].cachedAt).slice(30).forEach(([key])=>delete store[key]);
+  }
+  scheduleSessionCacheWrite();
 }
 function clearApiCache(){
   API_CACHE_EPOCH++;GET_CACHE.clear();GET_INFLIGHT.clear();
+  SESSION_API_CACHE={};
+  if(SESSION_CACHE_WRITE_TIMER){clearTimeout(SESSION_CACHE_WRITE_TIMER);SESSION_CACHE_WRITE_TIMER=0;}
   try{sessionStorage.removeItem(SESSION_API_CACHE_KEY);}catch{}
 }
+addEventListener('pagehide',()=>{if(SESSION_CACHE_WRITE_TIMER)flushSessionApiCache();});
 function apiCacheTtl(action){return API_CACHE_TTL[action]??20000;}
 function trimApiCache(){
   if(GET_CACHE.size<=80)return;
@@ -2171,13 +2824,30 @@ async function fetchJson(url,options,timeoutMs=20000){
   const timer=setTimeout(()=>controller.abort(),timeoutMs);
   try{
     const res=await fetch(url,{...options,signal:controller.signal});
-    if(!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    if(!res.ok){
+      const httpError=new Error(`伺服器暫時無法處理（HTTP ${res.status}）`);
+      httpError.code=res.status>=500?'SERVER_ERROR':'HTTP_ERROR';
+      throw httpError;
+    }
     const txt=await res.text();
     try{return JSON.parse(txt);}catch{throw new Error('伺服器回應格式錯誤，請稍後再試');}
   }catch(e){
-    if(e.name==='AbortError') throw new Error('連線逾時，請檢查網路後再試');
+    if(e.name==='AbortError'){
+      const timeoutError=new Error('伺服器回覆逾時');
+      timeoutError.code='TIMEOUT';
+      throw timeoutError;
+    }
     throw e;
   }finally{clearTimeout(timer);}
+}
+async function fetchGetWithRetry(url,options,timeoutMs=20000){
+  try{return await fetchJson(url,options,timeoutMs);}
+  catch(error){
+    const retryable=error.code==='SERVER_ERROR'||(!error.code&&error instanceof TypeError);
+    if(!retryable)throw error;
+    await new Promise(resolve=>setTimeout(resolve,350));
+    return fetchJson(url,options,timeoutMs);
+  }
 }
 function doGet(params){
   const qs=new URLSearchParams(params).toString();
@@ -2189,7 +2859,7 @@ function doGet(params){
   if(sessionCached){GET_CACHE.set(url,sessionCached);return Promise.resolve(sessionCached.data);}
   if(GET_INFLIGHT.has(url)) return GET_INFLIGHT.get(url);
   const requestEpoch=API_CACHE_EPOCH;
-  const request=fetchJson(url,{method:'GET',redirect:'follow',cache:'no-store'})
+  const request=fetchGetWithRetry(url,{method:'GET',redirect:'follow',cache:'no-store'})
     .then(data=>{
       if(requestEpoch===API_CACHE_EPOCH&&data&&data.success!==false){
         GET_CACHE.set(url,{data,cachedAt:Date.now()});trimApiCache();writeSessionApiCache(params,data);
@@ -2200,13 +2870,13 @@ function doGet(params){
   GET_INFLIGHT.set(url,request);
   return request;
 }
-async function doPost(body){
+async function doPost(body,{timeoutMs=30000,clearCache:shouldClearCache=true}={}){
   const result=await fetchJson(GAS_URL,{
     method:'POST',redirect:'follow',
     headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify(body)
-  });
-  if(result&&result.success)clearApiCache();
+  },timeoutMs);
+  if(result&&result.success&&shouldClearCache)clearApiCache();
   return result;
 }
 
@@ -2241,6 +2911,8 @@ let LOADING_COUNT=0,LOADING_TIMER=null;
 function ld(show){
   const id='__ld';
   LOADING_COUNT=Math.max(0,LOADING_COUNT+(show?1:-1));
+  const page=document.getElementById('page');
+  if(page)page.setAttribute('aria-busy',String(LOADING_COUNT>0));
   if(LOADING_COUNT>0&&!document.getElementById(id)&&!LOADING_TIMER){
     LOADING_TIMER=setTimeout(()=>{
       LOADING_TIMER=null;if(LOADING_COUNT===0||document.getElementById(id))return;
@@ -3519,19 +4191,30 @@ const BUILTIN_FORMS=[
   {name:'廠商詢價比較表',category:'採購',file:'廠商詢價比較表.csv',csv:'項目,廠商,聯絡人,報價,稅別,交期,付款條件,評估,備註\n'},
   {name:'專案經費收支表',category:'經費',file:'專案經費收支表.csv',csv:'日期,專案,類型,分類,金額,對象,發票號碼,備註\n'}
 ];
-let DOC_KIND='form',DOC_CACHE=[];
+let DOC_KIND='form',DOC_CACHE=[],DOC_DB_PROMISE=null;
 function openDocDb(){
-  return new Promise((resolve,reject)=>{
-    const request=indexedDB.open('mcs_documents_v1',1);
-    request.onupgradeneeded=()=>request.result.createObjectStore('documents',{keyPath:'id'});
-    request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);
+  if(DOC_DB_PROMISE)return DOC_DB_PROMISE;
+  DOC_DB_PROMISE=new Promise((resolve,reject)=>{
+    const request=indexedDB.open('mcs_documents_v1',2);
+    request.onupgradeneeded=()=>{
+      const store=request.result.objectStoreNames.contains('documents')
+        ? request.transaction.objectStore('documents')
+        : request.result.createObjectStore('documents',{keyPath:'id'});
+      if(!store.indexNames.contains('kind'))store.createIndex('kind','kind',{unique:false});
+    };
+    request.onsuccess=()=>{
+      request.result.onversionchange=()=>{request.result.close();DOC_DB_PROMISE=null;};
+      resolve(request.result);
+    };
+    request.onerror=()=>{DOC_DB_PROMISE=null;reject(request.error);};
   });
+  return DOC_DB_PROMISE;
 }
 async function docList(kind){
   const db=await openDocDb();
   return new Promise((resolve,reject)=>{
-    const req=db.transaction('documents').objectStore('documents').getAll();
-    req.onsuccess=()=>resolve(req.result.filter(item=>item.kind===kind));req.onerror=()=>reject(req.error);
+    const req=db.transaction('documents').objectStore('documents').index('kind').getAll(kind);
+    req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
   });
 }
 async function docPut(record){
@@ -3601,15 +4284,20 @@ async function saveDocument(){
   const kind=document.getElementById('fd-kind').value,name=document.getElementById('fd-name').value.trim();
   const file=document.getElementById('fd-file').files[0];if(!name||!file){toast('warning','請填寫名稱並選擇檔案');return;}
   try{
-    await docPut({id:newId('doc'),kind,name,category:document.getElementById('fd-cat').value.trim(),year:Number(document.getElementById('fd-year').value)||null,fileName:file.name,size:file.size,type:file.type,blob:file,updatedAt:new Date().toISOString()});
-    bootstrap.Modal.getInstance(document.getElementById('m-doc'))?.hide();toast('success','文件已保存');loadDocumentCenter(kind);
+    const record={id:newId('doc'),kind,name,category:document.getElementById('fd-cat').value.trim(),year:Number(document.getElementById('fd-year').value)||null,fileName:file.name,size:file.size,type:file.type,blob:file,updatedAt:new Date().toISOString()};
+    await docPut(record);
+    if(DOC_KIND===kind){DOC_CACHE.unshift(record);renderDocumentCenter();}
+    bootstrap.Modal.getInstance(document.getElementById('m-doc'))?.hide();toast('success','文件已保存');
   }catch(e){toast('danger','文件儲存失敗：'+e.message);}
 }
 async function downloadDocument(id){
   const item=await docGet(id);if(!item)return;
   const url=URL.createObjectURL(item.blob),a=document.createElement('a');a.href=url;a.download=item.fileName;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-async function deleteDocument(id){if(!confirm('確定刪除此文件？'))return;await docRemove(id);toast('success','文件已刪除');loadDocumentCenter(DOC_KIND);}
+async function deleteDocument(id){
+  if(!confirm('確定刪除此文件？'))return;
+  await docRemove(id);DOC_CACHE=DOC_CACHE.filter(item=>item.id!==id);renderDocumentCenter();toast('success','文件已刪除');
+}
 function downloadBuiltinForm(index){
   const form=BUILTIN_FORMS[index],blob=new Blob(['\ufeff'+form.csv],{type:'text/csv;charset=utf-8'});
   const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=form.file;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
