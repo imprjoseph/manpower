@@ -1921,24 +1921,34 @@ function attachmentPhaseFor(weeksBefore){
   return '結案追蹤';
 }
 const ATTACHMENT_CONSOLIDATION_GROUPS=[
-  {name:'完成設備與網路整合測試',items:['測試麥克風','測試投影畫面','測試現場網路']},
-  {name:'安排攝錄影',items:['安排攝影人員','安排錄影人員']},
-  {name:'確認餐飲數量與特殊需求',items:['確認餐點數量','調查飲食需求']},
-  {name:'完成布場盤點與留存',items:['清點布置物','拍攝布場驗收照']},
-  {name:'完成撤場復原與物資回收',items:['完成場地復原','回收設備物資']},
-  {name:'完成線上平台全流程測試',items:['測試講者連線','測試與會者流程','確認錄影設定']},
-  {name:'規劃論文海報展示',items:['確認海報規格','建立海報編號','規劃論文海報展示']},
-  {name:'完成論文海報展示準備',items:['準備海報工具','完成論文海報展示準備']}
+  {name:'確認活動需求與驗收標準',items:['確認活動目的','確認對象與人數','確認日期與地點','確認預算上限','確認驗收條件','確認需求與驗收標準'],description:'確認目的、對象、人數、日期、地點、預算、交付物與驗收標準，取得客戶書面確認。'},
+  {name:'確認場地與進撤場條件',items:['確認場地容量','取得場地平面圖','確認布撤場時段','確認卸貨停車','確認場地與進撤場'],description:'確認場地容量、平面圖、進撤場、卸貨停車、施工限制與相關費用。'},
+  {name:'完成場地技術與安全確認',items:['確認電力容量','確認網路規格','確認逃生消防','確認無障礙動線'],description:'確認電力、網路、消防逃生及無障礙動線，完成問題與改善紀錄。'},
+  {name:'確認議程與講者',items:['確認講者名單','確認議程與講者'],description:'確認議程架構、講者與座長名單、邀請順序及最晚鎖定日。'},
+  {name:'建立場次主檔與版控',items:['建立場次主檔','建立場次主檔與版控'],description:'彙整各場日期、地點、窗口、版本、講者、物資與限制，統一管理差異。'},
+  {name:'完成主視覺設計與定稿',items:['設計主視覺','確認主視覺'],description:'依活動目的及品牌規範完成主視覺，取得最終版確認。'},
+  {name:'完成製作物規格與送印',items:['建立製作清單','校對文字標誌','確認輸出材質','確認送印交期'],description:'確認品項、尺寸、材質、數量及交期，完成文字校對與送印。'},
+  {name:'完成設備與網路整合測試',items:['測試麥克風','測試投影畫面','測試現場網路'],description:'一次測試音響、投影、影片、網路及備援切換，記錄異常與修正結果。'},
+  {name:'安排攝錄影',items:['安排攝影人員','安排錄影人員'],description:'確認攝錄影人員、機位、拍攝清單、交檔規格、時程與使用授權。'},
+  {name:'確認餐飲數量與特殊需求',items:['確認餐點數量','調查飲食需求'],description:'確認各時段份數，彙整葷素、過敏、宗教及其他特殊需求。'},
+  {name:'完成布場盤點與留存',items:['清點布置物','拍攝布場驗收照'],description:'依清單完成布置物驗收，拍攝全景、各站及修正前後照片。'},
+  {name:'完成撤場復原與物資回收',items:['完成場地復原','回收設備物資'],description:'完成設備拆除、物資回收、垃圾清運及場地點交。'},
+  {name:'完成工作人員招募與訓練',items:['招募工作人員','完成人員訓練'],description:'依分站確認人數與替補，完成流程、話術、服裝、通訊及異常回報訓練。'},
+  {name:'完成線上平台全流程測試',items:['測試講者連線','測試與會者流程','確認錄影設定'],description:'測試講者連線、與會者操作、共享影音、錄影及備援流程。'},
+  {name:'規劃論文海報展示',items:['確認海報規格','建立海報編號','規劃論文海報展示'],description:'確認投稿規範、尺寸、審查、編號、分區、展示時段與作者說明。'},
+  {name:'完成論文海報展示準備',items:['準備海報工具','完成論文海報展示準備'],description:'完成入選名單、位置標示、作者通知、展示工具與未到件處理。'}
 ];
 function consolidateAttachmentTasks(items){
   const groupByItem=new Map();
-  ATTACHMENT_CONSOLIDATION_GROUPS.forEach(group=>group.items.forEach(name=>groupByItem.set(name,group.name)));
+  const consolidatedNames=new Set(ATTACHMENT_CONSOLIDATION_GROUPS.map(group=>group.name));
+  ATTACHMENT_CONSOLIDATION_GROUPS.forEach(group=>group.items.forEach(name=>groupByItem.set(name,group)));
   const combined=new Map();
   for(const item of items){
-    const name=groupByItem.get(item.milestoneName)||item.milestoneName;
+    const group=groupByItem.get(item.milestoneName);
+    const name=group?.name||item.milestoneName;
     const current=combined.get(name);
     if(!current){
-      combined.set(name,{...item,milestoneName:name});
+      combined.set(name,{...item,milestoneName:name,description:group?.description||item.description});
       continue;
     }
     const descriptions=[current.description,item.description].filter(Boolean);
@@ -1952,11 +1962,15 @@ function consolidateAttachmentTasks(items){
       notApplicableRule:(current.isCritical||item.isCritical)
         ?'原則不得略過；確需排除時，須註明原因並取得主管核准'
         :'不適用時填寫原因，由 PM 確認後關閉',
-      description:[...new Set(descriptions)].join('；'),
+      description:group?.description||[...new Set(descriptions)].join('；'),
       evidence:[...new Set(evidences)].join('、')
     });
   }
-  return [...combined.values()].map(item=>({...item,phase:attachmentPhaseFor(item.weeksBefore)}));
+  return [...combined.values()].map(item=>({
+    ...item,
+    phase:attachmentPhaseFor(item.weeksBefore),
+    evidence:consolidatedNames.has(item.milestoneName)?attachmentEvidenceFor(item):item.evidence
+  }));
 }
 function attachmentTemplatesFor(eventType){
   const merged=[...ATTACHMENT_COMMON_TEMPLATES,...detailedAttachmentTasksFor(eventType),...(ATTACHMENT_TYPE_TEMPLATES[eventType]||[])];
