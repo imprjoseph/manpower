@@ -1859,6 +1859,16 @@ const ATTACHMENT_DETAILED_TASKS=[
   ['O','確認錄影設定','直播作業',0.15,'Staff',true,'確認錄影位置、容量、聲軌、權限與備份。'],
   ['O','監控直播訊號','直播作業',0,'Staff',true,'監看畫面、聲音、延遲、在線人數與備援切換。'],
 
+  ['F','規劃展覽與贊助區','攤位聯絡',8,'PM',false,'確認是否設置展覽或贊助區，完成攤位數量、方案、配置、招商對象與收費原則。'],
+  ['F','完成參展單位管理','攤位聯絡',4,'Staff',false,'完成參展確認、合約、攤位手冊、用電網路、進撤場、證件及現場窗口彙整。'],
+  ['F','完成展覽區驗收','現場佈置',0.15,'PM',false,'依配置圖一次查核攤位、展品、用電、走道、消防、視覺與參展單位簽到。'],
+  ['FM','規劃 City Tour','專案統籌',8,'PM',false,'確認是否辦理城市導覽，完成對象、人數、預算、日期、路線、景點與雨備方案。'],
+  ['FM','完成 City Tour 行前安排','後勤作業',2,'Staff',false,'整合報名名單、交通、導覽、餐飲、門票、保險、無障礙需求與行前通知。'],
+  ['FM','執行 City Tour 與結案','賓客接待',0,'PM',false,'完成集合清點、車次與導覽控場、緊急應變；活動後核對費用、照片及意見回饋。'],
+  ['F','規劃論文海報展示','週邊製作',8,'PM',false,'確認是否辦理論文海報展示，完成投稿規範、尺寸、審查、編號、分區、展示時段及作者說明。'],
+  ['F','完成論文海報展示準備','週邊製作',1,'Staff',false,'完成入選名單、版面位置、標示、作者通知、展示工具、現場值班與未到件處理。'],
+  ['F','完成論文海報布撤展','現場佈置',0.15,'Staff',false,'依編號完成張貼與巡查，活動後辦理撤展、未領取海報保管及現場復原。'],
+
   ['XR','建立場次主檔','專案統籌',10,'PM',true,'彙整日期、地點、窗口、版本、物資與限制。'],
   ['XR','建立場次差異表','專案統籌',8,'PM',true,'標示講者、流程、設計、場地與人力差異。'],
   ['XR','確認各場窗口','專案統籌',6,'Staff',true,'逐場確認主辦、場地、廠商及緊急窗口。'],
@@ -1910,6 +1920,44 @@ function attachmentPhaseFor(weeksBefore){
   if(weeks===0)return '活動當天';
   return '結案追蹤';
 }
+const ATTACHMENT_CONSOLIDATION_GROUPS=[
+  {name:'完成設備與網路整合測試',items:['測試麥克風','測試投影畫面','測試現場網路']},
+  {name:'安排攝錄影',items:['安排攝影人員','安排錄影人員']},
+  {name:'確認餐飲數量與特殊需求',items:['確認餐點數量','調查飲食需求']},
+  {name:'完成布場盤點與留存',items:['清點布置物','拍攝布場驗收照']},
+  {name:'完成撤場復原與物資回收',items:['完成場地復原','回收設備物資']},
+  {name:'完成線上平台全流程測試',items:['測試講者連線','測試與會者流程','確認錄影設定']},
+  {name:'規劃論文海報展示',items:['確認海報規格','建立海報編號','規劃論文海報展示']},
+  {name:'完成論文海報展示準備',items:['準備海報工具','完成論文海報展示準備']}
+];
+function consolidateAttachmentTasks(items){
+  const groupByItem=new Map();
+  ATTACHMENT_CONSOLIDATION_GROUPS.forEach(group=>group.items.forEach(name=>groupByItem.set(name,group.name)));
+  const combined=new Map();
+  for(const item of items){
+    const name=groupByItem.get(item.milestoneName)||item.milestoneName;
+    const current=combined.get(name);
+    if(!current){
+      combined.set(name,{...item,milestoneName:name});
+      continue;
+    }
+    const descriptions=[current.description,item.description].filter(Boolean);
+    const evidences=[current.evidence,item.evidence].filter(Boolean);
+    combined.set(name,{
+      ...current,
+      weeksBefore:Math.max(Number(current.weeksBefore||0),Number(item.weeksBefore||0)),
+      isCritical:Boolean(current.isCritical||item.isCritical),
+      applicability:(current.isCritical||item.isCritical)?'必做':'條件式',
+      reviewer:(current.isCritical||item.isCritical)?'PM／主管':'PM',
+      notApplicableRule:(current.isCritical||item.isCritical)
+        ?'原則不得略過；確需排除時，須註明原因並取得主管核准'
+        :'不適用時填寫原因，由 PM 確認後關閉',
+      description:[...new Set(descriptions)].join('；'),
+      evidence:[...new Set(evidences)].join('、')
+    });
+  }
+  return [...combined.values()].map(item=>({...item,phase:attachmentPhaseFor(item.weeksBefore)}));
+}
 function attachmentTemplatesFor(eventType){
   const merged=[...ATTACHMENT_COMMON_TEMPLATES,...detailedAttachmentTasksFor(eventType),...(ATTACHMENT_TYPE_TEMPLATES[eventType]||[])];
   const normalized=merged.map(item=>{
@@ -1920,7 +1968,7 @@ function attachmentTemplatesFor(eventType){
         affectedMilestones:shortAttachmentAffectedNames(item.affectedMilestones),
         ...attachmentSopFields(item)};
     });
-  const unique=normalized.filter((item,index)=>normalized.findIndex(other=>other.milestoneName===item.milestoneName)===index);
+  const unique=consolidateAttachmentTasks(normalized);
   const categoryOrder=new Map(MILESTONE_CATEGORIES.map((name,index)=>[name,index]));
   return unique
     .sort((a,b)=>
