@@ -1879,6 +1879,28 @@ function shortAttachmentAffectedNames(value){
   const aliases={'報價與採購時程確認':'核定預算與採購時程','場地檔期與合約確認':'確認場地與進撤場'};
   return String(value||'').split(',').map(name=>ATTACHMENT_SHORT_NAME_BY_NAME[name]||aliases[name]||name).filter(Boolean).join(',');
 }
+function attachmentEvidenceFor(item){
+  const name=String(item.milestoneName||'');
+  if(/照片|攝影|錄影|畫面|素材|展品/.test(name))return '照片／影片檔或交付連結';
+  if(/測試|彩排|驗收|查核|確認/.test(name))return '查核表、測試紀錄或核准截圖';
+  if(/寄送|發送|通知|邀請/.test(name))return '寄送紀錄與收件名單';
+  if(/名單|清單|通訊錄|座位|編號|配置|排程|流程|議程/.test(name))return '最新版清單或核准文件';
+  if(/報價|預算|費用|合約|付款|保險/.test(name))return '報價、合約、憑證或核准紀錄';
+  if(/網站|平台|連結|網路|直播/.test(name))return '網址、權限截圖或測試紀錄';
+  if(/場地|場勘|布置|搭建|撤場|復原/.test(name))return '場地文件、點交紀錄或現場照片';
+  return '核准文件、完成截圖或可追溯紀錄';
+}
+function attachmentSopFields(item){
+  const required=Boolean(item.isCritical);
+  return {
+    applicability:required?'必做':'條件式',
+    evidence:attachmentEvidenceFor(item),
+    reviewer:required?'PM／主管':'PM',
+    notApplicableRule:required
+      ?'原則不得略過；確需排除時，須註明原因並取得主管核准'
+      :'不適用時填寫原因，由 PM 確認後關閉'
+  };
+}
 function attachmentTemplatesFor(eventType){
   const merged=[...ATTACHMENT_COMMON_TEMPLATES,...detailedAttachmentTasksFor(eventType),...(ATTACHMENT_TYPE_TEMPLATES[eventType]||[])];
   const unique=merged.filter((item,index)=>merged.findIndex(other=>other.milestoneName===item.milestoneName)===index);
@@ -1887,7 +1909,8 @@ function attachmentTemplatesFor(eventType){
       const sourceName=item.milestoneName;
       return {...item,eventType,milestoneName:ATTACHMENT_SHORT_NAME_BY_NAME[sourceName]||sourceName,
         category:ATTACHMENT_CATEGORY_BY_NAME[sourceName]||item.category||milestoneCategory(item),
-        sortOrder:index+1,affectedMilestones:shortAttachmentAffectedNames(item.affectedMilestones)};
+        sortOrder:index+1,affectedMilestones:shortAttachmentAffectedNames(item.affectedMilestones),
+        ...attachmentSopFields(item)};
     });
 }
 
